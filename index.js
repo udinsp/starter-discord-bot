@@ -68,7 +68,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`);
         const ipData = response.data;
 
-        // Format the response data
         const formattedData = `
         IP Address: ${ipData.ip}
         Network: ${ipData.network}
@@ -97,7 +96,54 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to fetch IP information. Please make sure you provided a valid IP address.'
+            content: 'Failed to fetch IP information.'
+          }
+        });
+      }
+    }
+
+    if (interaction.data.name === 'shorten') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(url)}`);
+        const shortenData = response.data;
+        const { full_short_link, full_short_link2, full_short_link3 } = shortenData.result;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to shorten the URL.'
+          }
+        });
+      }
+    }
+
+    if (interaction.data.name === 'animeq') {
+      try {
+        const response = await axios.get('https://animechan.vercel.app/api/random');
+        const quoteData = response.data;
+        const { anime, character, quote } = quoteData;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `Anime: ${anime}\nCharacter: ${character}\nQuote: ${quote}`
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch anime quote.'
           }
         });
       }
@@ -119,25 +165,40 @@ app.get('/register_commands', async (req, res) => {
     },
     {
       "name": "ip",
-      "description": "Checks information about an IP address",
+      "description": "Fetches information about an IP address",
       "options": [
         {
-          "name": "address",
-          "description": "IP address to check",
-          "type": 3, // Type 3 represents STRING type
+          "name": "ip_address",
+          "description": "IP address to fetch information",
+          "type": 3,
           "required": true
         }
       ]
+    },
+    {
+      "name": "shorten",
+      "description": "Shortens a URL",
+      "options": [
+        {
+          "name": "url",
+          "description": "URL to shorten",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "animeq",
+      "description": "Fetches a random anime quote",
+      "options": []
     }
   ];
 
   try {
-    // api docs - https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
     let discord_response = await discord_api.put(
       `/applications/${APPLICATION_ID}/guilds/${GUILD_ID}/commands`,
       slash_commands
     );
-
     console.log(discord_response.data);
     return res.send('Commands have been registered');
   } catch (e) {
