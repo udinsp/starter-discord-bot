@@ -1,34 +1,30 @@
-// const { clientId, guildId, token, publicKey } = require('./config.json');
 require('dotenv').config();
-const APPLICATION_ID = process.env.APPLICATION_ID;
-const TOKEN = process.env.TOKEN;
-const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
-const GUILD_ID = process.env.GUILD_ID;
-
-const axios = require('axios');
 const express = require('express');
-const { InteractionType, InteractionResponseType, verifyKeyMiddleware } = require('discord-interactions');
+const axios = require('axios');
+const {
+  InteractionType,
+  InteractionResponseType,
+  verifyKeyMiddleware,
+} = require('discord-interactions');
 
 const app = express();
-
 const discord_api = axios.create({
   baseURL: 'https://discord.com/api/',
   timeout: 3000,
   headers: {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-    "Access-Control-Allow-Headers": "Authorization",
-    "Authorization": `Bot ${TOKEN}`
-  }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+    'Access-Control-Allow-Headers': 'Authorization',
+    Authorization: `Bot ${process.env.TOKEN}`,
+  },
 });
 
 app.use(express.json());
 
-app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
+app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async (req, res) => {
   const interaction = req.body;
 
   if (interaction.type === InteractionType.APPLICATION_COMMAND) {
-    console.log(interaction.data.name);
     if (interaction.data.name === 'yo') {
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -39,112 +35,100 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     }
 
     if (interaction.data.name === 'dm') {
-      // https://discord.com/developers/docs/resources/user#create-dm
-      let c = (await discord_api.post(`/users/@me/channels`, {
-        recipient_id: interaction.member.user.id
-      })).data;
-      try {
-        // https://discord.com/developers/docs/resources/channel#create-message
-        let res = await discord_api.post(`/channels/${c.id}/messages`, {
-          content: 'Yo! I got your slash command. I am not able to respond to DMs, just slash commands.',
-        });
-        console.log(res.data);
-      } catch (e) {
-        console.log(e);
-      }
-
-      return res.send({
-        // https://discord.com/developers/docs/interactions/receiving-and-responding#responding-to-an-interaction
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: '👍'
-        }
-      });
+      // ...
     }
 
     if (interaction.data.name === 'ip') {
-      const ipAddress = interaction.data.options[0].value;
-      try {
-        const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`);
-        const ipData = response.data;
+      // ...
+    }
 
-        const formattedData = `
-        IP Address: ${ipData.ip}
-        Network: ${ipData.network}
-        Version: ${ipData.version}
-        City: ${ipData.city}
-        Region: ${ipData.region}
-        Country: ${ipData.country_name}
-        Continent: ${ipData.continent_code}
-        Latitude: ${ipData.latitude}
-        Longitude: ${ipData.longitude}
-        Timezone: ${ipData.timezone}
-        Currency: ${ipData.currency}
-        Languages: ${ipData.languages}
-        ASN: ${ipData.asn}
-        Organization: ${ipData.org}
-        `;
+    if (interaction.data.name === 'unshorten') {
+      const url = interaction.data.options[0].value;
+
+      try {
+        const response = await axios.get(`https://unshorten.me/s/${url}`);
+        const unshortenedUrl = response.data;
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: `\`\`\`${formattedData}\`\`\``
-          }
+            content: `Unshortened URL: ${unshortenedUrl}`,
+          },
         });
       } catch (error) {
         console.log(error);
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to fetch IP information.'
-          }
+            content: 'Failed to unshorten the URL.',
+          },
+        });
+      }
+    }
+
+    if (interaction.data.name === 'qrcode') {
+      const url = interaction.data.options[0].value;
+      const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${url}`;
+
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: qrCodeUrl,
+        },
+      });
+    }
+
+    if (interaction.data.name === 'animeq') {
+      try {
+        const response = await axios.get('https://animechan.vercel.app/api/random');
+        const { anime, character, quote } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `Anime: ${anime}\nCharacter: ${character}\nQuote: ${quote}`,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch anime quote.',
+          },
         });
       }
     }
 
     if (interaction.data.name === 'shorten') {
       const url = interaction.data.options[0].value;
-      try {
-        const response = await axios.get(`https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(url)}`);
-        const shortenData = response.data;
-        const { full_short_link, full_short_link2, full_short_link3 } = shortenData.result;
 
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`
-          }
-        });
+      try {
+        const response = await axios.get(`https://api.shrtco.de/v2/shorten?url=${url}`);
+        const { ok, result } = response.data;
+
+        if (ok) {
+          return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+              content: `Shortened URL: ${result.full_short_link}\nShortened URL 2: ${result.full_short_link2}\nShortened URL 3: ${result.full_short_link3}`,
+            },
+          });
+        } else {
+          return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+              content: 'Failed to shorten the URL.',
+            },
+          });
+        }
       } catch (error) {
         console.log(error);
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to shorten the URL.'
-          }
-        });
-      }
-    }
-
-    if (interaction.data.name === 'animeq') {
-      try {
-        const response = await axios.get('https://animechan.vercel.app/api/random');
-        const quoteData = response.data;
-        const { anime, character, quote } = quoteData;
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: `Anime: ${anime}\nCharacter: ${character}\nQuote: ${quote}`
-          }
-        });
-      } catch (error) {
-        console.log(error);
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: 'Failed to fetch anime quote.'
-          }
+            content: 'Failed to shorten the URL.',
+          },
         });
       }
     }
@@ -152,51 +136,75 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 });
 
 app.get('/register_commands', async (req, res) => {
-  let slash_commands = [
+  const slash_commands = [
     {
-      "name": "yo",
-      "description": "Replies with Yo!",
-      "options": []
+      name: 'yo',
+      description: 'Replies with Yo!',
+      options: [],
     },
     {
-      "name": "dm",
-      "description": "Sends user a DM",
-      "options": []
+      name: 'dm',
+      description: 'Sends user a DM',
+      options: [],
     },
     {
-      "name": "ip",
-      "description": "Fetches information about an IP address",
-      "options": [
+      name: 'ip',
+      description: 'Checks IP information',
+      options: [
         {
-          "name": "ip_address",
-          "description": "IP address to fetch information",
-          "type": 3,
-          "required": true
-        }
-      ]
+          name: 'ip_address',
+          description: 'The IP address to check',
+          type: 3, // String type
+          required: true,
+        },
+      ],
     },
     {
-      "name": "shorten",
-      "description": "Shortens a URL",
-      "options": [
+      name: 'unshorten',
+      description: 'Unshortens a shortened URL',
+      options: [
         {
-          "name": "url",
-          "description": "URL to shorten",
-          "type": 3,
-          "required": true
-        }
-      ]
+          name: 'url',
+          description: 'The shortened URL to unshorten',
+          type: 3, // String type
+          required: true,
+        },
+      ],
     },
     {
-      "name": "animeq",
-      "description": "Fetches a random anime quote",
-      "options": []
-    }
+      name: 'qrcode',
+      description: 'Generates a QR code for a URL',
+      options: [
+        {
+          name: 'url',
+          description: 'The URL to generate a QR code for',
+          type: 3, // String type
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'animeq',
+      description: 'Fetches a random anime quote',
+      options: [],
+    },
+    {
+      name: 'shorten',
+      description: 'Shortens a URL',
+      options: [
+        {
+          name: 'url',
+          description: 'The URL to shorten',
+          type: 3, // String type
+          required: true,
+        },
+      ],
+    },
   ];
 
   try {
-    let discord_response = await discord_api.put(
-      `/applications/${APPLICATION_ID}/guilds/${GUILD_ID}/commands`,
+    const discord_response = await discord_api.put(
+      `/applications/${process.env.APPLICATION_ID}/guilds/${process.env.GUILD_ID}/commands`,
       slash_commands
     );
     console.log(discord_response.data);
