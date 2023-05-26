@@ -107,7 +107,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'phonevalid ') {
+	if (interaction.data.name === 'phonevalid') {
       const number = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://www.ipqualityscore.com/api/json/phone/${API_IPQUALITYSCORE}/${number}`);
@@ -117,9 +117,9 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         Formatted: ${numberData.formatted}
         Local Format: ${numberData.local_format}
         Valid: ${numberData.valid}
-		Name: ${numberData.name}
-		Leaked: ${numberData.leaked}
-		Spammer: ${numberData.spammer}
+	Name: ${numberData.name}
+	Leaked: ${numberData.leaked}
+	Spammer: ${numberData.spammer}
         Fraud Score: ${numberData.fraud_score}
         Recent Abuse: ${numberData.recent_abuse}
         VOIP: ${numberData.voip}
