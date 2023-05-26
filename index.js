@@ -117,7 +117,12 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`
+			embeds: [
+			{
+				description: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`
+				color: null
+			}
+		  ]
           }
         });
       } catch (error) {
@@ -126,6 +131,47 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to shorten the URL.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'unshorten') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://unshorten.me/s/${encodeURIComponent(url)}`);
+        const unshortenedUrl = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+			embeds: [
+			{
+				description: `Unshortened URL: ${unshortenedUrl}`
+				color: null
+			}
+		  ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to unshorten the URL.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'qrcode') {
+      const text = options.find((option) => option.name === 'text').value;
+      const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${encodeURIComponent(text)}`;
+	  
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+			content: qrCodeUrl,
           }
         });
       }
@@ -140,7 +186,12 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: `Anime: ${anime}\nCharacter: ${character}\nQuote: ${quote}`
+			embeds: [
+			{
+				description: `${quote}\n\n** ${character} - ${anime} **`
+				color: null
+			}
+			]
           }
         });
       } catch (error) {
@@ -187,6 +238,30 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "URL to shorten",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "unshorten",
+      "description": "Unshorten a shortened URL",
+      "options": [
+        {
+          "name": "url",
+          "description": "The shortened URL to unshorten",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "qrcode",
+      "description": "Generate a QR code from a text",
+      "options": [
+        {
+          "name": "text",
+          "description": "The text to encode into a QR code",
           "type": 3,
           "required": true
         }
