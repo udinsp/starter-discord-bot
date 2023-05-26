@@ -323,6 +323,118 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'reverseiplookup') {
+      const ipAddress = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/reverseiplookup/?q=${encodeURIComponent(ipAddress)}`);
+        const resultreverseiplookup = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: resultreverseiplookup,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Reverse IP Lookup.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'aslookup') {
+      const ipAddress = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/aslookup/?q=${encodeURIComponent(ipAddress)}`);
+        const resultaslookup = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: resultaslookup,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Check an Autonomous System Number (ASN).'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pagelinks') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/pagelinks/?q=${encodeURIComponent(url)}`);
+        const resultpagelinks = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: resultpagelinks,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Extract Links From Page.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'httpheaders') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/httpheaders/?q=${encodeURIComponent(url)}`);
+        const resulthttpheaders = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: resulthttpheaders,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to HTTP Header Check.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'qrcode') {
       const text = interaction.data.options.find((option) => option.name === 'text').value;
@@ -428,11 +540,11 @@ app.get('/register_commands', async (req, res) => {
     },
 	{
       "name": "dnslookup",
-      "description": "Performs a DNS lookup for a given URL and returns the corresponding IP address",
+      "description": "Performs a DNS lookup for a given domain and returns the corresponding IP address",
       "options": [
         {
-          "name": "url",
-          "description": "The URL to perform the DNS lookup on",
+          "name": "domain",
+          "description": "The domain to perform the DNS lookup on",
           "type": 3,
           "required": true
         }
@@ -464,11 +576,59 @@ app.get('/register_commands', async (req, res) => {
     },
 	{
       "name": "hostsearch",
-      "description": "Finds DNS host records (subdomains) for a given URL",
+      "description": "Finds DNS host records (subdomains) for a given domain",
+      "options": [
+        {
+          "name": "domain",
+          "description": "The domain for which to find DNS host records (subdomains)",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "reverseiplookup",
+      "description": "Performs a reverse IP lookup to find the associated domain(s) for a given IP address",
+      "options": [
+        {
+          "name": "ip_or_domain",
+          "description": "The IP address or domain for which to perform the reverse IP lookup",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "aslookup",
+      "description": "Performs an Autonomous System Number (ASN) lookup to retrieve information about the specified ASN or IP address",
+      "options": [
+        {
+          "name": "asn_or_ip",
+          "description": "The Autonomous System Number (ASN) or IP address for which to retrieve information",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "pagelinks",
+      "description": "Extracts links from a web page and returns a list of the extracted links",
       "options": [
         {
           "name": "url",
-          "description": "The URL for which to find DNS host records (subdomains)",
+          "description": "The URL of the web page from which to extract links",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "httpheaders",
+      "description": "Performs an HTTP header check on a given URL and returns the headers of the HTTP response",
+      "options": [
+        {
+          "name": "url",
+          "description": "The URL to perform the HTTP header check on",
           "type": 3,
           "required": true
         }
