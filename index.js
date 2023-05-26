@@ -1,4 +1,3 @@
-// const { clientId, guildId, token, publicKey } = require('./config.json');
 require('dotenv').config();
 const APPLICATION_ID = process.env.APPLICATION_ID;
 const TOKEN = process.env.TOKEN;
@@ -88,14 +87,14 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-			embeds: [
-			{
-				description: formattedData,
-				color: null
-			}
-			]
-		}
-		});
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
       } catch (error) {
         console.log(error);
         return res.send({
@@ -117,12 +116,12 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-			embeds: [
-			{
-				description: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`,
-				color: null
-			}
-		  ]
+            embeds: [
+              {
+                description: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`,
+                color: null
+              }
+            ]
           }
         });
       } catch (error) {
@@ -135,8 +134,8 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
-	
-	if (interaction.data.name === 'unshorten') {
+
+    if (interaction.data.name === 'unshorten') {
       const url = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://unshorten.me/s/${encodeURIComponent(url)}`);
@@ -145,12 +144,12 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-			embeds: [
-			{
-				description: `Unshortened URL: ${unshortenedUrl}`,
-				color: null
-			}
-		  ]
+            embeds: [
+              {
+                description: `Unshortened URL: ${unshortenedUrl}`,
+                color: null
+              }
+            ]
           }
         });
       } catch (error) {
@@ -163,18 +162,17 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
-	
-	if (interaction.data.name === 'qrcode') {
+
+    if (interaction.data.name === 'qrcode') {
       const text = interaction.data.options.find((option) => option.name === 'text').value;
       const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${encodeURIComponent(text)}`;
-	  
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-			content: qrCodeUrl,
-          }
-        });
-      }
+
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: qrCodeUrl,
+        }
+      });
     }
 
     if (interaction.data.name === 'animeq') {
@@ -186,12 +184,12 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-			embeds: [
-			{
-				description: `${quote}\n\n** ${character} - ${anime} **`,
-				color: null
-			}
-			]
+            embeds: [
+              {
+                description: `${quote}\n\n** ${character} - ${anime} **`,
+                color: null
+              }
+            ]
           }
         });
       } catch (error) {
@@ -233,7 +231,7 @@ app.get('/register_commands', async (req, res) => {
     },
     {
       "name": "shorten",
-      "description": "Shortens a URL",
+      "description": "Shorten a URL",
       "options": [
         {
           "name": "url",
@@ -243,25 +241,25 @@ app.get('/register_commands', async (req, res) => {
         }
       ]
     },
-	{
+    {
       "name": "unshorten",
-      "description": "Unshorten a shortened URL",
+      "description": "Unshorten a URL",
       "options": [
         {
           "name": "url",
-          "description": "The shortened URL to unshorten",
+          "description": "URL to unshorten",
           "type": 3,
           "required": true
         }
       ]
     },
-	{
+    {
       "name": "qrcode",
-      "description": "Generate a QR code from a text",
+      "description": "Generates a QR code",
       "options": [
         {
           "name": "text",
-          "description": "The text to encode into a QR code",
+          "description": "Text for the QR code",
           "type": 3,
           "required": true
         }
@@ -275,23 +273,16 @@ app.get('/register_commands', async (req, res) => {
   ];
 
   try {
-    let discord_response = await discord_api.put(
-      `/applications/${APPLICATION_ID}/guilds/${GUILD_ID}/commands`,
-      slash_commands
-    );
-    console.log(discord_response.data);
-    return res.send('Commands have been registered');
-  } catch (e) {
-    console.error(e.code);
-    console.error(e.response?.data);
-    return res.send(`${e.code} error from Discord`);
+    await discord_api.put(`/applications/${APPLICATION_ID}/guilds/${GUILD_ID}/commands`, slash_commands);
+    res.send('Slash commands registered successfully.');
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Failed to register slash commands.');
   }
 });
 
-app.get('/', async (req, res) => {
-  return res.send('Follow the documentation');
-});
+const PORT = process.env.PORT || 3000;
 
-app.listen(8999, () => {
-  console.log('Server is running on port 8999');
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
 });
