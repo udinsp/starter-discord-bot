@@ -591,7 +591,7 @@ app.get('/register_commands', async (req, res) => {
       "description": "Performs a reverse IP lookup to find the associated domain(s) for a given IP address",
       "options": [
         {
-          "name": "ip_or_domain",
+          "name": "ip",
           "description": "The IP address or domain for which to perform the reverse IP lookup",
           "type": 3,
           "required": true
@@ -603,7 +603,7 @@ app.get('/register_commands', async (req, res) => {
       "description": "Performs an Autonomous System Number (ASN) lookup to retrieve information about the specified ASN or IP address",
       "options": [
         {
-          "name": "asn_or_ip",
+          "name": "asn",
           "description": "The Autonomous System Number (ASN) or IP address for which to retrieve information",
           "type": 3,
           "required": true
