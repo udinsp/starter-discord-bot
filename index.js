@@ -119,8 +119,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: {
 			embeds: [
 			{
-				description: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`,
-				color: null
+				description: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`
 			}
 		  ]
           }
@@ -147,8 +146,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: {
 			embeds: [
 			{
-				description: `Unshortened URL: ${unshortenedUrl}`,
-				color: null
+				description: `Unshortened URL: ${unshortenedUrl}`
 			}
 		  ]
           }
