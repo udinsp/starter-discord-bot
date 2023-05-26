@@ -33,7 +33,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: `Yo ${interaction.member.user.username}!`,
+          content: `Dalem ${interaction.member.user.username}!`,
         },
       });
     }
@@ -46,7 +46,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       try {
         // https://discord.com/developers/docs/resources/channel#create-message
         let res = await discord_api.post(`/channels/${c.id}/messages`, {
-          content: 'Yo! I got your slash command. I am not able to respond to DMs, just slash commands.',
+          content: 'Ada yang bisa saya bantu bang?',
         });
         console.log(res.data);
       } catch (e) {
@@ -216,14 +216,14 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       const url = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://api.hackertarget.com/dnslookup/?q=${encodeURIComponent(url)}`);
-        const dnslookup = response.data;
+        const resultdnslookup = response.data;
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             embeds: [
               {
-                description: `Unshortened URL: ${dnslookup}`,
+                description: resultdnslookup,
                 color: null
               }
             ]
@@ -235,6 +235,90 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to Lookup DNS.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'reversedns') {
+      const ipAddress = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/reversedns/?q=${encodeURIComponent(ipAddress)}`);
+        const resultreversedns = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: resultreversedns,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Reverse DNS.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'findshareddns') {
+      const ns = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/findshareddns/?q=${encodeURIComponent(ns)}`);
+        const resultfindshareddns = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: resultfindshareddns,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Find Shared DNS Servers.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'hostsearch') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/hostsearch/?q=${encodeURIComponent(url)}`);
+        const resulthostsearch = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: resulthostsearch,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Find DNS Host Records (Subdomains).'
           }
         });
       }
@@ -349,6 +433,42 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "The URL to perform the DNS lookup on",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "reversedns",
+      "description": "Performs a reverse DNS lookup for a given IP address and returns the corresponding domain name",
+      "options": [
+        {
+          "name": "ip_address",
+          "description": "The IP address to perform the reverse DNS lookup on",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "findshareddns",
+      "description": "Finds shared DNS servers between multiple domains using a specific nameserver",
+      "options": [
+        {
+          "name": "nameserver",
+          "description": "The nameserver to use for finding shared DNS servers",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "hostsearch",
+      "description": "Finds DNS host records (subdomains) for a given URL",
+      "options": [
+        {
+          "name": "url",
+          "description": "The URL for which to find DNS host records (subdomains)",
           "type": 3,
           "required": true
         }
