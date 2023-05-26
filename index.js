@@ -119,7 +119,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: {
 			embeds: [
 			{
-				description: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`
+				description: `Shortened URLs:\n1. ${full_short_link}\n2. ${full_short_link2}\n3. ${full_short_link3}`,
 				color: null
 			}
 		  ]
@@ -147,7 +147,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: {
 			embeds: [
 			{
-				description: `Unshortened URL: ${unshortenedUrl}`
+				description: `Unshortened URL: ${unshortenedUrl}`,
 				color: null
 			}
 		  ]
@@ -165,7 +165,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     }
 	
 	if (interaction.data.name === 'qrcode') {
-      const text = options.find((option) => option.name === 'text').value;
+      const text = interaction.data.options.find((option) => option.name === 'text').value;
       const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${encodeURIComponent(text)}`;
 	  
         return res.send({
@@ -188,7 +188,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: {
 			embeds: [
 			{
-				description: `${quote}\n\n** ${character} - ${anime} **`
+				description: `${quote}\n\n** ${character} - ${anime} **`,
 				color: null
 			}
 			]
