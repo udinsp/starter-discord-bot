@@ -117,12 +117,12 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         Formatted: ${numberData.formatted}
         Local Format: ${numberData.local_format}
         Valid: ${numberData.valid}
-	Name: ${numberData.name}
-	Leaked: ${numberData.leaked}
-	Spammer: ${numberData.spammer}
+		Name: ${numberData.name}
+		Leaked: ${numberData.leaked}
+		Spammer: ${numberData.spammer}
         Fraud Score: ${numberData.fraud_score}
         Recent Abuse: ${numberData.recent_abuse}
-        VOIP: ${numberData.voip}
+        VOIP: ${numberData.VOIP}
         Prepaid: ${numberData.prepaid}
         Risky: ${numberData.risky}
         Active: ${numberData.active}
@@ -211,6 +211,34 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'dnslookup') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.hackertarget.com/dnslookup/?q=${encodeURIComponent(url)}`);
+        const dnslookup = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `Unshortened URL: ${dnslookup}`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Lookup DNS.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'qrcode') {
       const text = interaction.data.options.find((option) => option.name === 'text').value;
@@ -284,7 +312,7 @@ app.get('/register_commands', async (req, res) => {
       "options": [
         {
           "name": "number",
-          "description": "The phone number to validate",
+          "description": "The phone number to validate. Example 6289123456789",
           "type": 3,
           "required": true
         }
@@ -309,6 +337,18 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "URL to unshorten",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "dnslookup",
+      "description": "Performs a DNS lookup for a given URL and returns the corresponding IP address",
+      "options": [
+        {
+          "name": "url",
+          "description": "The URL to perform the DNS lookup on",
           "type": 3,
           "required": true
         }
