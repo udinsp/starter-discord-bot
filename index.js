@@ -107,7 +107,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'phone number validation ') {
+	if (interaction.data.name === 'phonevalid ') {
       const number = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://www.ipqualityscore.com/api/json/phone/${API_IPQUALITYSCORE}/${number}`);
@@ -279,7 +279,7 @@ app.get('/register_commands', async (req, res) => {
       ]
     },
 	{
-      "name": "phone number validation",
+      "name": "phonevalid",
       "description": "Validates a phone number and returns its details",
       "options": [
         {
