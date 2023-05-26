@@ -3,6 +3,7 @@ const APPLICATION_ID = process.env.APPLICATION_ID;
 const TOKEN = process.env.TOKEN;
 const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
 const GUILD_ID = process.env.GUILD_ID;
+const API_IPQUALITYSCORE = process.env.API_IPQUALITYSCORE;
 
 const axios = require('axios');
 const express = require('express');
@@ -101,6 +102,54 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to fetch IP information.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'phone number validation ') {
+      const number = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://www.ipqualityscore.com/api/json/phone/${API_IPQUALITYSCORE}/${number}`);
+        const numberData = response.data;
+
+        const formattedData = `
+        Formatted: ${numberData.formatted}
+        Local Format: ${numberData.local_format}
+        Valid: ${numberData.valid}
+		Name: ${numberData.name}
+		Leaked: ${numberData.leaked}
+		Spammer: ${numberData.spammer}
+        Fraud Score: ${numberData.fraud_score}
+        Recent Abuse: ${numberData.recent_abuse}
+        VOIP: ${numberData.voip}
+        Prepaid: ${numberData.prepaid}
+        Risky: ${numberData.risky}
+        Active: ${numberData.active}
+        Carrier: ${numberData.carrier}
+        Line Type: ${numberData.line_type}
+        Country: ${numberData.country}
+        Dialing Code: ${numberData.dialing_code}
+        Timezone: ${numberData.timezone}
+        `;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Phone Number information.'
           }
         });
       }
@@ -224,6 +273,18 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "ip_address",
           "description": "IP address to fetch information",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "phone number validation",
+      "description": "Validates a phone number and returns its details",
+      "options": [
+        {
+          "name": "number",
+          "description": "The phone number to validate",
           "type": 3,
           "required": true
         }
