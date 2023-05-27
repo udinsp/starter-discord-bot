@@ -409,7 +409,62 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to fetch anime quote.'
+            content: 'Failed to fetch quote.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'dailyq2') {
+      try {
+        const response = await axios.get('https://api.quotable.io/quotes/random');
+        const quoteData = response.data[0];
+        const { content, author } = quoteData;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${content}\n\n**${author}**`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch quote.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'stoicq') {
+      try {
+        const response = await axios.get('https://api.themotivate365.com/stoic-quote');
+        const { author, quote } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${quote}\n\n**${author}**`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch quote.'
           }
         });
       }
@@ -605,6 +660,16 @@ app.get('/register_commands', async (req, res) => {
 	{
       "name": "dailyq",
       "description": "Displays a random inspirational or motivational quote every day",
+      "options": []
+    },
+	{
+      "name": "dailyq2",
+      "description": "Displays a random inspirational or motivational quote every day",
+      "options": []
+    },
+	{
+      "name": "stoicq",
+      "description": "Stoicism Quotes",
       "options": []
     },
     {
