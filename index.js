@@ -376,23 +376,24 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     }
 
     if (interaction.data.name === 'qrcode') {
-      const text = interaction.data.options.find((option) => option.name === 'text').value;
-      const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${encodeURIComponent(text)}`;
+		const text = interaction.data.options.find((option) => option.name === 'text').value;
+		const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${encodeURIComponent(text)}`;
 
-      return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-		embeds: [
-		{
-			color: null,
-			images: {
-				url: qrCodeUrl
-			}
-		}
-		]
-        }
-      });
-    }
+		return res.send({
+		type: InteractionResponseType.CHANNEL_MESSAGE,
+		data: {
+			embeds: [
+			  {
+				color: null,
+				image: {
+					url: qrCodeUrl
+				 }
+				}
+			]
+		  }
+		});
+	}
+
 
     if (interaction.data.name === 'animeq') {
       try {
