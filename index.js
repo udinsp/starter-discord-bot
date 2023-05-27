@@ -324,18 +324,18 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'aslookup') {
+	if (interaction.data.name === 'reverseiplookup') {
       const url = interaction.data.options[0].value;
       try {
-        const response = await axios.get(`https://api.hackertarget.com/aslookup/?q=${encodeURIComponent(url)}`);
-        const resultaslookup = response.data;
+        const response = await axios.get(`https://api.hackertarget.com/reverseiplookup/?q=${encodeURIComponent(url)}`);
+        const resultreverseiplookup = response.data;
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             embeds: [
               {
-                description: resultaslookup,
+                description: resultreverseiplookup,
                 color: null
               }
             ]
@@ -346,7 +346,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to ASN Lookup.'
+            content: 'Failed to Reverse IP Lookup.'
           }
         });
       }
@@ -456,11 +456,11 @@ app.get('/register_commands', async (req, res) => {
     },
 	{
       "name": "dnslookup",
-      "description": "Performs a DNS lookup for a given domain and returns the corresponding IP address",
+      "description": "Performs a DNS lookup for a given URL and returns the corresponding IP address",
       "options": [
         {
-          "name": "domain",
-          "description": "The domain to perform the DNS lookup on",
+          "name": "url",
+          "description": "The URL to perform the DNS lookup on",
           "type": 3,
           "required": true
         }
@@ -492,23 +492,23 @@ app.get('/register_commands', async (req, res) => {
     },
 	{
       "name": "hostsearch",
-      "description": "Finds DNS host records (subdomains) for a given domain",
+      "description": "Finds DNS host records (subdomains) for a given URL",
       "options": [
         {
-          "name": "domain",
-          "description": "The domain for which to find DNS host records (subdomains)",
+          "name": "url",
+          "description": "The URL for which to find DNS host records (subdomains)",
           "type": 3,
           "required": true
         }
       ]
     },
 	{
-      "name": "aslookup",
-      "description": "Performs an Autonomous System Number (ASN) lookup to retrieve information about the specified ASN or IP address",
+      "name": "reverseiplookup",
+      "description": "Performs a reverse IP lookup to find the associated domain(s) for a given IP address",
       "options": [
         {
-          "name": "asn_or_ip",
-          "description": "The Autonomous System Number (ASN) or IP address for which to retrieve information",
+          "name": "ip_or_domain",
+          "description": "The IP address or domain for which to perform the reverse IP lookup",
           "type": 3,
           "required": true
         }
