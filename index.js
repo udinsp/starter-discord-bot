@@ -324,34 +324,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'reverseiplookup') {
-      const url = interaction.data.options[0].value;
-      try {
-        const response = await axios.get(`https://api.hackertarget.com/reverseiplookup/?q=${encodeURIComponent(url)}`);
-        const resultreverseiplookup = response.data;
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            embeds: [
-              {
-                description: resultreverseiplookup,
-                color: null
-              }
-            ]
-          }
-        });
-      } catch (error) {
-        console.log(error);
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: 'Failed to Reverse IP Lookup.'
-          }
-        });
-      }
-    }
-	
 	if (interaction.data.name === 'aslookup') {
       const url = interaction.data.options[0].value;
       try {
@@ -525,18 +497,6 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "domain",
           "description": "The domain for which to find DNS host records (subdomains)",
-          "type": 3,
-          "required": true
-        }
-      ]
-    },
-	{
-      "name": "reverseiplookup",
-      "description": "Performs a reverse IP lookup to find the associated domain(s) for a given IP address",
-      "options": [
-        {
-          "name": "ip_or_domain",
-          "description": "The IP address or domain for which to perform the reverse IP lookup",
           "type": 3,
           "required": true
         }
