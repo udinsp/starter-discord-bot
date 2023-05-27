@@ -5,6 +5,10 @@ const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
 const GUILD_ID = process.env.GUILD_ID;
 const API_IPQUALITYSCORE = process.env.API_IPQUALITYSCORE;
 
+const MAX_RESULTS = 25;
+let currentPage = 1;
+let totalPages = 1;
+
 const axios = require('axios');
 const express = require('express');
 const {
