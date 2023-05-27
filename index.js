@@ -577,6 +577,116 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'evil') {
+      try {
+        const response = await axios.get('https://evilinsult.com/generate_insult.php?lang=en&type=json');
+        const { insult } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${insult}`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch evil insult.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'activity') {
+      try {
+        const response = await axios.get('https://www.boredapi.com/api/activity');
+        const { activity, type, participants } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `Activity: ${activity}\nType: ${type}\nParticipants: ${participants}`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch random activity.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'fcat') {
+      try {
+        const response = await axios.get('https://catfact.ninja/fact');
+        const { fact } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${fact}`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch cat fact.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pcat') {
+      try {
+        const response = await axios.get('https://api.thecatapi.com/v1/images/search');
+        const [{ url }] = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch cat image.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'animeq') {
       try {
@@ -797,6 +907,26 @@ app.get('/register_commands', async (req, res) => {
 	{
       "name": "jokes",
       "description": "Random Jokes",
+      "options": []
+    },
+	{
+      "name": "evil",
+      "description": "Random Evil Insult",
+      "options": []
+    },
+	{
+      "name": "activity",
+      "description": "Random Activity Recommendations",
+      "options": []
+    },
+	{
+      "name": "fcat",
+      "description": "Random Cat Facts",
+      "options": []
+    },
+	{
+      "name": "pcat",
+      "description": "Random Pictures Of Cats",
       "options": []
     },
     {
