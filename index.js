@@ -688,35 +688,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pbigcat') {
-      try {
-        const response = await axios.get('https://randombig.cat/roar.json');
-        const { url } = response.data;
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            embeds: [
-              {
-                image: {
-					url: url
-				},
-                color: null
-              }
-            ]
-          }
-        });
-      } catch (error) {
-        console.log(error);
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: 'Failed to fetch big cat image.'
-          }
-        });
-      }
-    }
-	
 	if (interaction.data.name === 'pdog') {
       try {
         const response = await axios.get('https://dog.ceo/api/breeds/image/random');
@@ -799,6 +770,49 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to fetch Shiba Inu dog image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'randuser') {
+      try {
+        const response = await axios.get('https://random-data-api.com/api/users/random_user');
+        const user = response.data;
+		const {first_name:e,last_name:t,username:s,email:a,phone_number:n,social_insurance_number:r,date_of_birth:_,employment:{title:i,key_skill:m},address:{city:o,street_name:c,street_address:d,zip_code:l,state:u,country:y,coordinates:b}}=user;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              { 
+				title: `${first_name} ${last_name}`,
+				description: `Username: ${username}\nEmail: ${email}\nPhone Number: ${phone_number}\nSocial Insurance Number: ${social_insurance_number}\nDate of Birth: ${date_of_birth}`,
+				fields: [
+				{
+					name: 'Employment',
+					value: `Title: ${title}\nKey Skill: ${key_skill}`
+				},
+				{
+					name: 'Address',
+					value: `City: ${city}\nStreet Name: ${street_name}\nStreet Address: ${street_address}\nZip Code: ${zip_code}\nState: ${state}\nCountry: ${country}`
+				},
+				{
+					name: 'Coordinates',
+					value: `Latitude: ${coordinates.lat}\nLongitude: ${coordinates.lng}`
+				}
+				],
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch random user data.'
           }
         });
       }
@@ -1046,11 +1060,6 @@ app.get('/register_commands', async (req, res) => {
       "options": []
     },
 	{
-      "name": "pbigcatcat",
-      "description": "Random Pictures Of Big Cats",
-      "options": []
-    },
-	{
       "name": "pdog",
       "description": "Random Pictures Of Dogs",
       "options": []
@@ -1063,6 +1072,11 @@ app.get('/register_commands', async (req, res) => {
 	{
       "name": "pshiba",
       "description": "Random Pictures Of Shiba Inu Dogs",
+      "options": []
+    },
+	{
+      "name": "randuser",
+      "description": "Random User Generator",
       "options": []
     },
     {
