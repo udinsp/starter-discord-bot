@@ -376,23 +376,44 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     }
 
     if (interaction.data.name === 'qrcode') {
-		const text = interaction.data.options.find((option) => option.name === 'text').value;
-		const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${encodeURIComponent(text)}`;
+      const text = interaction.data.options.find((option) => option.name === 'text').value;
+      const qrCodeUrl = `https://chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl=${encodeURIComponent(text)}`;
 
-		return res.send({
-		type: InteractionResponseType.CHANNEL_MESSAGE,
-		data: {
-			embeds: [
-			  {
-				color: null,
-				image: {
-					url: qrCodeUrl
-				 }
-				}
-			]
-		  }
-		});
-	}
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: qrCodeUrl,
+        }
+      });
+    }
+	
+	if (interaction.data.name === 'dailyq') {
+      try {
+        const response = await axios.get('https://zenquotes.io/api/random');
+        const quoteData = response.data[0];
+        const { q: quote, a: character } = quoteData;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${q}\n\n** ${a} **`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch anime quote.'
+          }
+        });
+      }
+    }
 
 
     if (interaction.data.name === 'animeq') {
@@ -580,6 +601,11 @@ app.get('/register_commands', async (req, res) => {
           "required": true
         }
       ]
+    },
+	{
+      "name": "dailyq",
+      "description": "Displays a random inspirational or motivational quote every day",
+      "options": []
     },
     {
       "name": "animeq",
