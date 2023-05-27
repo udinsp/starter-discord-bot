@@ -687,6 +687,122 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'pbigcat') {
+      try {
+        const response = await axios.get('https://randombig.cat/roar.json');
+        const { url } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch big cat image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pdog') {
+      try {
+        const response = await axios.get('https://dog.ceo/api/breeds/image/random');
+        const { message: imageUrl } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: imageUrl
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch dog image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pfox') {
+      try {
+        const response = await axios.get('https://randomfox.ca/floof/');
+        const { image } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: image
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch fox image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pshiba') {
+      try {
+        const response = await axios.get('https://shibe.online/api/shibes');
+        const [imageUrl] = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: imageUrl
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Shiba Inu dog image.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'animeq') {
       try {
@@ -927,6 +1043,26 @@ app.get('/register_commands', async (req, res) => {
 	{
       "name": "pcat",
       "description": "Random Pictures Of Cats",
+      "options": []
+    },
+	{
+      "name": "pbigcatcat",
+      "description": "Random Pictures Of Big Cats",
+      "options": []
+    },
+	{
+      "name": "pdog",
+      "description": "Random Pictures Of Dogs",
+      "options": []
+    },
+	{
+      "name": "pfox",
+      "description": "Random Pictures Of Foxes",
+      "options": []
+    },
+	{
+      "name": "pshiba",
+      "description": "Random Pictures Of Shiba Inu Dogs",
       "options": []
     },
     {
