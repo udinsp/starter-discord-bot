@@ -398,7 +398,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: {
             embeds: [
               {
-                description: `${q}\n\n** ${a} **`,
+                description: `${quote}\n\n** ${character} **`,
                 color: null
               }
             ]
