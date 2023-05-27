@@ -464,12 +464,119 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to fetch quote.'
+            content: 'Failed to fetch stoic quote.'
           }
         });
       }
     }
+	
+	if (interaction.data.name === 'ronq') {
+      try {
+        const response = await axios.get('http://ron-swanson-quotes.herokuapp.com/v2/quotes');
+        const quote = response.data[0];
 
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${quote}\n\n**Ron Swanson**`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Ron Swanson Quote.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'kanyeq') {
+      try {
+        const response = await axios.get('https://api.kanye.rest');
+        const { quote } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${quote}\n\n**Kanye West**`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Kanye West Quote.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'chuckj') {
+      try {
+        const response = await axios.get('https://api.chucknorris.io/jokes/random');
+        const { value } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${value}\n\n**Chuck Norris**`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Chuck Norris joke.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'jokes') {
+      try {
+        const response = await axios.get('https://official-joke-api.appspot.com/random_joke');
+        const { setup, punchline } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `**${setup}**\n\n${punchline}`,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch random joke.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'animeq') {
       try {
@@ -670,6 +777,26 @@ app.get('/register_commands', async (req, res) => {
 	{
       "name": "stoicq",
       "description": "Stoicism Quotes",
+      "options": []
+    },
+	{
+      "name": "ronq",
+      "description": "Ron Swanson Quotes",
+      "options": []
+    },
+	{
+      "name": "kanyeq",
+      "description": "Kanye West Quotes",
+      "options": []
+    },
+	{
+      "name": "chuckj",
+      "description": "Chuck Norris Jokes",
+      "options": []
+    },
+	{
+      "name": "jokes",
+      "description": "Random Jokes",
       "options": []
     },
     {
