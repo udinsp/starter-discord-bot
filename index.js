@@ -779,7 +779,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       try {
         const response = await axios.get('https://random-data-api.com/api/users/random_user');
         const user = response.data;
-		const {first_name:e,last_name:t,username:s,email:a,phone_number:n,social_insurance_number:r,date_of_birth:_,employment:{title:i,key_skill:m},address:{city:o,street_name:c,street_address:d,zip_code:l,state:u,country:y,coordinates:b}}=user;
+		const { first_name, last_name, username, email, phone_number, social_insurance_number, date_of_birth, employment: { title, key_skill }, address: { city, street_name, street_address, zip_code, state, country, coordinates } } = user;
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
