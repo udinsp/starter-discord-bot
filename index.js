@@ -184,7 +184,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       const text = interaction.data.options[0].value;
       try {
         const response = await fetch("https://api.bardapi.dev/chat", {
-			headers: { Authorization: "Bearer ${BARD_API}" },
+			headers: { Authorization: `Bearer ${BARD_API}` },
 			method: "POST",
 			body: JSON.stringify({ input: `${text}` }),
 		});
