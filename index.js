@@ -183,19 +183,24 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 	if (interaction.data.name === 'bard') {
 		const text = interaction.data.options[0].value;
 		try {
-		const response = await fetch("https://api.bardapi.dev/chat", {
-			headers: { Authorization: `Bearer ${BARD_API}` },
-			method: "POST",
-			body: JSON.stringify({ input: `${text}` }),
-		});
+			const response = await Promise.race([
+			fetch("https://api.bardapi.dev/chat", {
+				headers: { Authorization: `Bearer ${BARD_API}` },
+				method: "POST",
+				body: JSON.stringify({ input: `${text}` }),
+			}),
+			new Promise((_, reject) =>
+				setTimeout(() => reject(new Error("Timeout")), 10000)
+			),
+		]);
 		const data = await response.json();
 		const bardOut = data.output;
 
 		const responseData = {
 			type: 4,
 			data: {
-				content: bardOut
-			}
+				content: bardOut,
+			},
 		};
 
 		// Send the response back as an HTTP response
@@ -203,10 +208,10 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 	  } catch (error) {
 		console.log(error);
 		return res.send({
-			type: 4,
-			data: {
-				content: 'Failed to connect to Google Bard.'
-			}
+		type: 4,
+		data: {
+			content: 'Failed to connect to Google Bard.',
+		  },
 		});
 	  }
 	}
