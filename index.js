@@ -181,40 +181,38 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     }
 	
 	if (interaction.data.name === 'bard') {
-      const text = interaction.data.options[0].value;
-      try {
-        const response = await fetch("https://api.bardapi.dev/chat", {
-			headers: { Authorization: `Bearer ${BARD_API}` },
-			method: "POST",
-			body: JSON.stringify({ input: `${text}` }),
+		const text = interaction.data.options[0].value;
+		try {
+			const response = await fetch("https://api.bardapi.dev/chat", {
+				headers: { Authorization: `Bearer ${BARD_API}` },
+				method: "POST",
+				body: JSON.stringify({ input: `${text}` }),
 		});
 		const data = await response.json();
-        const bardOut = data.output;
+		const bardOut = data.output;
 
-        const responseData = {
-			type: 4,
-			data: {
-				embeds: [
-					{
-						description: bardOut,
-						color: null
-					}
-				]
+		const responseData = {
+		embeds: [
+			{
+			description: bardOut,
+			color: null
 			}
+		]
 		};
-		
-		await interaction.reply(responseData);
-		res.send(responseData);
-	  } catch (error) {
+
+		// Send the response back to the user
+		await interaction.reply({ embeds: [responseData] });
+		} catch (error) {
 		console.log(error);
 		return res.send({
-			type: 4,
-			data: {
-				content: 'Failed to connect to Google Bard.'
-			}
+		type: 4,
+		data: {
+			content: 'Failed to connect to Google Bard.'
+		  }
 		});
 	  }
 	}
+
 	
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
