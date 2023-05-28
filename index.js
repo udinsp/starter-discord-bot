@@ -191,11 +191,8 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: {
             embeds: [
               {
-                description: `${tiktok.result.description}\n\n**[[Download Video]](${tiktok.result.video}) [[Download Music]](${tiktok.result.audio})**`,
-                color: null,
-				image: {
-					url: tiktok.result.pp
-				}
+                description: `${tiktok.result.description}\n\n**[[Download Video]](${tiktok.result.video})**`,
+                color: null
               }
             ]
           }
