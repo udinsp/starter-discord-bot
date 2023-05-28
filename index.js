@@ -180,55 +180,44 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'dltiktok') {
-	const url = interaction.data.options[0].value;
-	try {
-		const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index`, {
-		params: {
-			url: encodeURIComponent(url)
-		},
-		headers: {
-			'X-RapidAPI-Key': '839dfec541msh5030fab72cf0207p19ae66jsn99a40fb9d265',
-			'X-RapidAPI-Host': 'tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com'
-		}
-		});
-		const tiktokdl = response.data;
-    
-		// Check if the response contains the necessary properties
-		if (tiktokdl && tiktokdl.video && tiktokdl.music && tiktokdl.description && tiktokdl.cover) {
-		const video = tiktokdl.video[0];
-		const music = tiktokdl.music[0];
-		const description = tiktokdl.description[0];
-		const cover = tiktokdl.cover[0];
+    if (interaction.data.name === 'dltiktok') {
+		const url = interaction.data.options[0].value;
+		try {
+			const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index?url=${encodeURIComponent(url)}`);
+			const tiktokdl = response.data;
+			const video = tiktokdl.video && tiktokdl.video[0];
+			const music = tiktokdl.music && tiktokdl.music[0];
+			const description = tiktokdl.description && tiktokdl.description[0];
+			const cover = tiktokdl.cover && tiktokdl.cover[0];
 
-		return res.send({
+			if (video && music && description && cover) {
+			 return res.send({
+				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+				data: {
+					embeds: [
+					{
+						description: `Description: ${description}\n\n**[[Download Video]](${video}) [[Download Music]](${music})**`,
+						color: null,
+						thumbnail: {
+							url: cover
+								}
+						}
+					  ]
+					}
+			});
+		} else {
+		throw new Error('Invalid response data');
+		}
+	   } catch (error) {
+		 console.log(error);
+		 return res.send({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: {
-			embeds: [
-				{
-				description: `${description}\n\n**[[Download Video]](${video}) [[Download Music]](${music})**`,
-				color: null,
-				thumbnail: {
-					url: cover
-				}
-				}
-			]
-			}
-		});
-		} else {
-			throw new Error('Invalid response data');
-		}
-	  } catch (error) {
-		console.log(error);
-		return res.send({
-		type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-		data: {
-			content: 'Failed to download TikTok videos.'
+				content: 'Failed to download TikTok videos.'
 			}
 		});
 	  }
 	}
-
 
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
