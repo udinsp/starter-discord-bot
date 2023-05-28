@@ -4,6 +4,7 @@ const TOKEN = process.env.TOKEN;
 const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
 const GUILD_ID = process.env.GUILD_ID;
 const API_IPQUALITYSCORE = process.env.API_IPQUALITYSCORE;
+const BARD_API = process.env.BARD_API;
 
 const axios = require('axios');
 const express = require('express');
@@ -174,6 +175,39 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to unshorten the URL.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'bard') {
+      const text = interaction.data.options[0].value;
+      try {
+        const response = await fetch("https://api.bardapi.dev/chat", {
+			headers: { Authorization: "Bearer ${BARD_API}" },
+			method: "POST",
+			body: JSON.stringify({ input: `${text}` }),
+		});
+		const data = await response.json();
+        const bardOut = data.output;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: bardOut,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to connect google bard.'
           }
         });
       }
@@ -864,6 +898,48 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'randuser3') {
+      try {
+        const response = await axios.get('https://fakerapi.it/api/v1/persons?_quantity=1');
+        const user = response.data.data[0];
+		const { id, firstname, lastname, email, phone, birthday, gender, address: { street, streetName, buildingNumber, city, zipcode, country, county_code, latitude, longitude } } = user;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              { 
+				title: `${firstname} ${lastname}`,
+				description: `Gender: ${gender}\nEmail: ${email}\nBirthday: ${birthday}`,
+				fields: [
+				{
+					name: 'Address',
+					value: `Street: ${street} ${streetName} ${buildingNumber}\nCity: ${city}\nZipcode: ${zipcode}\nCountry: ${country}\nCounty Code: ${county_code}\nCoordinates: ${latitude}, ${longitude}`
+				},
+				{
+					name: 'Contact',
+					value: `Phone: ${phone}`
+				}
+				],
+				thumbnail: {
+					url: large
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch random user data.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'animeq') {
       try {
@@ -950,6 +1026,18 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "URL to unshorten",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "bard",
+      "description": "Google Bard AI ChatBot",
+      "options": [
+        {
+          "name": "text",
+          "description": "Enter your question",
           "type": 3,
           "required": true
         }
@@ -1128,6 +1216,11 @@ app.get('/register_commands', async (req, res) => {
     },
 	{
       "name": "randuser2",
+      "description": "Random User Generator",
+      "options": []
+    },
+	{
+      "name": "randuser3",
       "description": "Random User Generator",
       "options": []
     },
