@@ -183,10 +183,10 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 	if (interaction.data.name === 'bard') {
 		const text = interaction.data.options[0].value;
 		try {
-			const response = await fetch("https://api.bardapi.dev/chat", {
-				headers: { Authorization: `Bearer ${BARD_API}` },
-				method: "POST",
-				body: JSON.stringify({ input: `${text}` }),
+		const response = await fetch("https://api.bardapi.dev/chat", {
+			headers: { Authorization: `Bearer ${BARD_API}` },
+			method: "POST",
+			body: JSON.stringify({ input: `${text}` }),
 		});
 		const data = await response.json();
 		const bardOut = data.output;
@@ -194,18 +194,13 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 		const responseData = {
 			type: 4,
 			data: {
-				embeds: [
-				{
-				description: bardOut,
-				color: null
+				content: bardOut
 			}
-			]
-		  }
 		};
 
 		// Send the response back as an HTTP response
 		res.status(200).json(responseData);
-		} catch (error) {
+	  } catch (error) {
 		console.log(error);
 		return res.send({
 			type: 4,
@@ -215,6 +210,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 		});
 	  }
 	}
+
 
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
@@ -925,9 +921,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 					value: `Phone: ${phone}`
 				}
 				],
-				thumbnail: {
-					url: large
-				},
                 color: null
               }
             ]
