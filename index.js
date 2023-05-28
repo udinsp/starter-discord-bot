@@ -180,41 +180,40 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'bard') {
-		const text = interaction.data.options[0].value;
-		try {
-			const response = await Promise.race([
-			fetch("https://api.bardapi.dev/chat", {
-				headers: { Authorization: `Bearer ${BARD_API}` },
-				method: "POST",
-				body: JSON.stringify({ input: `${text}` }),
-			}),
-			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error("Timeout")), 10000)
-			),
-		]);
-		const data = await response.json();
-		const bardOut = data.output;
+	if (interaction.data.name === 'dltiktok') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index?url=${encodeURIComponent(url)}`);
+        const tiktokdl = response.data;
+		const video = tiktokdl.video[0];
+		const music = tiktokdl.music[0];
+		const description = tiktokdl.description[0];
+		const cover = tiktokdl.cover[0];
 
-		const responseData = {
-			type: 4,
-			data: {
-				content: bardOut,
-			},
-		};
-
-		// Send the response back as an HTTP response
-		res.status(200).json(responseData);
-	  } catch (error) {
-		console.log(error);
-		return res.send({
-		type: 4,
-		data: {
-			content: 'Failed to connect to Google Bard.',
-		  },
-		});
-	  }
-	}
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `description": "${description}\n\n**[[Download Video]](${video}) [[Download Music]](${music}) **`,
+                color: null,
+				thumbnail: {
+					url: cover
+				}
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to download TikTok videos.'
+          }
+        });
+      }
+    }
 
 
 	if (interaction.data.name === 'dnslookup') {
@@ -1033,12 +1032,12 @@ app.get('/register_commands', async (req, res) => {
       ]
     },
 	{
-      "name": "bard",
-      "description": "Google Bard AI ChatBot",
+      "name": "dltiktok",
+      "description": "Download TikTok Videos Without Watermark",
       "options": [
         {
-          "name": "text",
-          "description": "Enter your question",
+          "name": "url",
+          "description": "Enter link tiktok videos",
           "type": 3,
           "required": true
         }
