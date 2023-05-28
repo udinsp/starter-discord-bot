@@ -179,45 +179,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
-	
-    if (interaction.data.name === 'dltiktok') {
-		const url = interaction.data.options[0].value;
-		try {
-			const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index?url=${encodeURIComponent(url)}`);
-			const tiktokdl = response.data;
-			const video = tiktokdl.video && tiktokdl.video[0];
-			const music = tiktokdl.music && tiktokdl.music[0];
-			const description = tiktokdl.description && tiktokdl.description[0];
-			const cover = tiktokdl.cover && tiktokdl.cover[0];
-
-			if (video && music && description && cover) {
-			 return res.send({
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					embeds: [
-					{
-						description: `Description: ${description}\n\n**[[Download Video]](${video}) [[Download Music]](${music})**`,
-						color: null,
-						thumbnail: {
-							url: cover
-								}
-						}
-					  ]
-					}
-			});
-		} else {
-		throw new Error('Invalid response data');
-		}
-	   } catch (error) {
-		 console.log(error);
-		 return res.send({
-			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-			data: {
-				content: 'Failed to download TikTok videos.'
-			}
-		});
-	  }
-	}
 
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
@@ -1029,18 +990,6 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "URL to unshorten",
-          "type": 3,
-          "required": true
-        }
-      ]
-    },
-	{
-      "name": "dltiktok",
-      "description": "Download TikTok Videos Without Watermark",
-      "options": [
-        {
-          "name": "url",
-          "description": "Enter link tiktok videos",
           "type": 3,
           "required": true
         }
