@@ -183,31 +183,46 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     if (interaction.data.name === 'dltiktok') {
       const url = interaction.data.options[0].value;
       try {
-        const response = await axios.get(`https://api2.trizy.co/api/download/tiktok?url=${encodeURIComponent(url)}`);
-        const tiktok = response.data;
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            embeds: [
-              {
-                description: `${tiktok.result.description}\n\n**[[Download Video]](${tiktok.result.video})**`,
-                color: null
-              }
-            ]
-          }
-        });
-      } catch (error) {
-        console.log(error);
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: 'Failed to download TikTok video.'
-          }
-        });
-      }
-    }
-
+        const tiktokResponse = await axios.get(`https://api2.trizy.co/api/download/tiktok?url=${encodeURIComponent(url)}`);
+        const tiktok = tiktokResponse.data;
+		
+		const shortUrlResponse = await axios.get(`https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(tiktok.result.video)}`);
+		const shortUrlData = shortUrlResponse.data;
+		
+		if (shortUrlData.ok) {
+			const shortVideoUrl = shortUrlData.result.full_short_link2;
+			
+			return res.send({
+				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+				data: {
+					embeds: [
+					  {
+						  description: `${tiktok.result.description}\n\n**[[Download Video]](${shortVideoUrl})**`,
+						  color: null
+					  }
+					]
+				}
+			});
+		} else {
+			console.error('Failed to shorten video URL:', shortUrlData.error);
+			return res.send({
+				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+				data: {
+					content: 'Failed to download TikTok video.'
+				}
+			});
+		  }
+		} catch (error) {
+			console.error('Error:', error);
+			return res.send({
+				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+				data: {
+					content: 'Failed to download TikTok video.'
+				}
+			});
+		}
+	}
+		
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
       try {
