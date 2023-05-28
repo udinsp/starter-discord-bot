@@ -180,26 +180,21 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'dltiktok') {
+    if (interaction.data.name === 'dltiktok') {
       const url = interaction.data.options[0].value;
       try {
-        const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index?url=${encodeURIComponent(url)}`, {
-			headers: {
-				'X-RapidAPI-Host': 'tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com',
-				'X-RapidAPI-Key': '839dfec541msh5030fab72cf0207p19ae66jsn99a40fb9d265'
-			}
-		});
-        const { video, music, description, cover } = response.data;
+        const response = await axios.get(`https://api2.trizy.co/api/download/tiktok?url=${encodeURIComponent(url)}`);
+        const tiktok = response.data;
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             embeds: [
               {
-                description: `${description}\n\n**[[Download Video]](${video[0]}) [[Download Music]](${music[0]})**`,
+                description: `${tiktok.result.description}\n\n**[[Download Video]](${tiktok.result.video}) [[Download Music]](${tiktok.result.audio})**`,
                 color: null,
 				image: {
-					url: cover[0]
+					url: tiktok.result.pp
 				}
               }
             ]
@@ -210,7 +205,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to download tiktok video.'
+            content: 'Failed to download TikTok video.'
           }
         });
       }
