@@ -817,6 +817,53 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'randuser2') {
+      try {
+        const response = await axios.get('https://randomuser.me/api/');
+        const user = response.data.results[0];
+		const { gender, name: { title, first, last }, location: { street: { number, name }, city, state, country, postcode, coordinates: { latitude, longitude }, timezone: { offset, description } }, email, dob: { date, age }, registered: { date: registeredDate, age: registeredAge }, phone, cell, id: { name: idName, value: idValue }, picture: { large }, nat } = user;
+		
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              { 
+				title: `${title} ${first} ${last}`,
+				description: `Gender: ${gender}\nEmail: ${email}\nDate of Birth: ${date}\nAge: ${age}\nRegistered Date: ${registeredDate}\nRegistered Age: ${registeredAge}`,
+				fields: [
+				{
+					name: 'Address',
+					value: `Street: ${number} ${name}\nCity: ${city}\nState: ${state}\nCountry: ${country}\nPostcode: ${postcode}\nCoordinates: ${latitude}, ${longitude}\nTimezone: ${offset} - ${description}`
+				},
+				{
+					name: 'Contact',
+					value: `Phone: ${phone}\nCell: ${cell}`
+				},
+				{
+					name: 'Identification',
+					value: `ID Name: ${idName}\nID Value: ${idValue}`
+				}
+				],
+				thumbnail: {
+					url: large
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch random user data.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'animeq') {
       try {
@@ -1076,6 +1123,11 @@ app.get('/register_commands', async (req, res) => {
     },
 	{
       "name": "randuser",
+      "description": "Random User Generator",
+      "options": []
+    },
+	{
+      "name": "randuser2",
       "description": "Random User Generator",
       "options": []
     },
