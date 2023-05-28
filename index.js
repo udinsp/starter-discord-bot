@@ -192,28 +192,30 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 		const bardOut = data.output;
 
 		const responseData = {
-		embeds: [
-			{
-			description: bardOut,
-			color: null
+			type: 4,
+			data: {
+				embeds: [
+				{
+				description: bardOut,
+				color: null
 			}
-		]
+			]
+		  }
 		};
 
-		// Send the response back to the user
-		await interaction.reply({ embeds: [responseData] });
+		// Send the response back as an HTTP response
+		res.status(200).json(responseData);
 		} catch (error) {
 		console.log(error);
 		return res.send({
-		type: 4,
-		data: {
-			content: 'Failed to connect to Google Bard.'
-		  }
+			type: 4,
+			data: {
+				content: 'Failed to connect to Google Bard.'
+			}
 		});
 	  }
 	}
 
-	
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
       try {
