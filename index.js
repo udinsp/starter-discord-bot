@@ -183,7 +183,16 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 	if (interaction.data.name === 'dltiktok') {
       const url = interaction.data.options[0].value;
       try {
-        const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index?url=${encodeURIComponent(url)}`);
+        const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index`, {
+			params: {
+				url: encodeURIComponent(url)
+			},
+			headers: {
+				'X-RapidAPI-Key': '839dfec541msh5030fab72cf0207p19ae66jsn99a40fb9d265',
+				'X-RapidAPI-Host': 'tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com'
+			}
+		});
+		
         const tiktokdl = response.data;
 		const video = tiktokdl.video[0];
 		const music = tiktokdl.music[0];
