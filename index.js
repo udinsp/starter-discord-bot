@@ -179,6 +179,42 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'dltiktok') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com/vid/index?url=${encodeURIComponent(url)}`, {
+			headers: {
+				'X-RapidAPI-Host': 'tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com',
+				'X-RapidAPI-Key': '839dfec541msh5030fab72cf0207p19ae66jsn99a40fb9d265'
+			}
+		});
+        const { video, music, description, cover } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: `${description}\n\n**[[Download Video]](${video[0]}) [[Download Music]](${music[0]})**`,
+                color: null,
+				image: {
+					url: cover[0]
+				}
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to download tiktok video.'
+          }
+        });
+      }
+    }
 
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
@@ -990,6 +1026,18 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "URL to unshorten",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "dltiktok",
+      "description": "Download TikTok Videos Without Watermark",
+      "options": [
+        {
+          "name": "link_tiktok",
+          "description": "Enter link tiktok video",
           "type": 3,
           "required": true
         }
