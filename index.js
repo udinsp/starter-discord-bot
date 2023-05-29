@@ -896,6 +896,64 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
+	if (interaction.data.name === 'pwaifu') {
+      try {
+        const response = await axios.get('https://api.waifu.pics/sfw/waifu');
+        const { url } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch fox image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pneko') {
+      try {
+        const response = await axios.get('https://api.waifu.pics/sfw/neko');
+        const { url } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch fox image.'
+          }
+        });
+      }
+    }
+	
 	if (interaction.data.name === 'randuser') {
       try {
         const response = await axios.get('https://random-data-api.com/api/users/random_user');
@@ -1327,6 +1385,16 @@ app.get('/register_commands', async (req, res) => {
 	{
       "name": "pshiba",
       "description": "Random Pictures Of Shiba Inu Dogs",
+      "options": []
+    },
+	{
+      "name": "pwaifu",
+      "description": "Random Waifu Anime Pictures",
+      "options": []
+    },
+	{
+      "name": "pneko",
+      "description": "Random Neko Anime Pictures",
       "options": []
     },
 	{
