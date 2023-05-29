@@ -303,15 +303,15 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 	if (interaction.data.name === 'shorten3') {
       const url = interaction.data.options[0].value;
       try {
-        const response = await axios.get(`https://ulvis.net/api.php?url=${encodeURIComponent(url)}`);
-        const resultshorten = response.data;
+        const response = await axios.get(`https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
+        const { shorturl } = response.data;
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             embeds: [
               {
-                description: `Shortened URL: ${resultshorten}`,
+                description: `Shortened URL: ${shorturl}`,
                 color: null
               }
             ]
@@ -1455,7 +1455,7 @@ app.get('/register_commands', async (req, res) => {
     },
 	{
       "name": "shorten3",
-      "description": "Shorten a URL with domain ulvis.net",
+      "description": "Shorten a URL with domain is.gd",
       "options": [
         {
           "name": "url",
