@@ -93,6 +93,66 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
+	if (interaction.data.name === 'ip2') {
+      const ipAddress = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`http://free.ipwhois.io/json/${ipAddress}`);
+		const ipData = response.data;
+
+		const formattedData = `IP Address: ${ipData.ip}\nType: ${ipData.type}\nContinent: ${ipData.continent}\nContinent Code: ${ipData.continent_code}\nCountry: ${ipData.country}\nCountry Code: ${ipData.country_code}\nCountry Flag: ${ipData.country_flag}\nCountry Capital: ${ipData.country_capital}\nCountry Phone: ${ipData.country_phone}\nCountry Neighbours: ${ipData.country_neighbours}\nRegion: ${ipData.region}\nCity: ${ipData.city}\nLatitude: ${ipData.latitude}\nLongitude: ${ipData.longitude}\nASN: ${ipData.asn}\nOrganization: ${ipData.org}\nISP: ${ipData.isp}\nTimezone: ${ipData.timezone}\nTimezone Name: ${ipData.timezone_name}\nTimezone GMT: ${ipData.timezone_gmt}\nCurrency: ${ipData.currency}\nCurrency Code: ${ipData.currency_code}\nCurrency Symbol: ${ipData.currency_symbol}\nCurrency Rates: ${ipData.currency_rates}\nCurrency Plural: ${ipData.currency_plural}`;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch IP information.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'ip3') {
+      const ipAddress = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://www.iplocate.io/api/lookup/${ipAddress}`);
+		const ipData = response.data;
+
+		const formattedData = `IP Address: ${ipData.ip}\nCountry: ${ipData.country}\nCountry Code: ${ipData.country_code}\nIs EU: ${ipData.is_eu}\nCity: ${ipData.city}\nContinent: ${ipData.continent}\nLatitude: ${ipData.latitude}\nLongitude: ${ipData.longitude}\nTime Zone: ${ipData.time_zone}\nPostal Code: ${ipData.postal_code}\nSubdivision: ${ipData.subdivision}\nSubdivision2: ${ipData.subdivision2}\nNetwork: ${ipData.network}\nOrganization: ${ipData.org}\nASN: ${ipData.asn}\nASN Network: ${ipData.asn_network}\nIs Proxy: ${ipData.threat.is_proxy}`;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch IP information.'
+          }
+        });
+      }
+    }
+	
 	if (interaction.data.name === 'phonevalid') {
       const number = interaction.data.options[0].value;
       try {
@@ -1009,6 +1069,30 @@ app.get('/register_commands', async (req, res) => {
     },
     {
       "name": "ip",
+      "description": "Fetches information about an IP address",
+      "options": [
+        {
+          "name": "ip_address",
+          "description": "IP address to fetch information",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "ip2",
+      "description": "Fetches information about an IP address",
+      "options": [
+        {
+          "name": "ip_address",
+          "description": "IP address to fetch information",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "ip3",
       "description": "Fetches information about an IP address",
       "options": [
         {
