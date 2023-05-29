@@ -99,7 +99,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         const response = await axios.get(`http://free.ipwhois.io/json/${ipAddress}`);
 		const ipData = response.data;
 
-		const formattedData = `IP Address: ${ipData.ip}\nType: ${ipData.type}\nContinent: ${ipData.continent}\nContinent Code: ${ipData.continent_code}\nCountry: ${ipData.country}\nCountry Code: ${ipData.country_code}\nCountry Flag: ${ipData.country_flag}\nCountry Capital: ${ipData.country_capital}\nCountry Phone: ${ipData.country_phone}\nCountry Neighbours: ${ipData.country_neighbours}\nRegion: ${ipData.region}\nCity: ${ipData.city}\nLatitude: ${ipData.latitude}\nLongitude: ${ipData.longitude}\nASN: ${ipData.asn}\nOrganization: ${ipData.org}\nISP: ${ipData.isp}\nTimezone: ${ipData.timezone}\nTimezone Name: ${ipData.timezone_name}\nTimezone GMT: ${ipData.timezone_gmt}\nCurrency: ${ipData.currency}\nCurrency Code: ${ipData.currency_code}\nCurrency Symbol: ${ipData.currency_symbol}\nCurrency Rates: ${ipData.currency_rates}\nCurrency Plural: ${ipData.currency_plural}`;
+		const formattedData = `IP Address: ${ipData.ip}\nType: ${ipData.type}\nContinent: ${ipData.continent}\nContinent Code: ${ipData.continent_code}\nCountry: ${ipData.country}\nCountry Code: ${ipData.country_code}\nCountry Capital: ${ipData.country_capital}\nCountry Phone: ${ipData.country_phone}\nCountry Neighbours: ${ipData.country_neighbours}\nRegion: ${ipData.region}\nCity: ${ipData.city}\nLatitude: ${ipData.latitude}\nLongitude: ${ipData.longitude}\nASN: ${ipData.asn}\nOrganization: ${ipData.org}\nISP: ${ipData.isp}\nTimezone: ${ipData.timezone}\nTimezone Name: ${ipData.timezone_name}\nTimezone GMT: ${ipData.timezone_gmt}\nCurrency: ${ipData.currency}\nCurrency Code: ${ipData.currency_code}\nCurrency Symbol: ${ipData.currency_symbol}\nCurrency Rates: ${ipData.currency_rates}\nCurrency Plural: ${ipData.currency_plural}`;
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -896,7 +896,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pwaifu') {
+	if (interaction.data.name === 'pwaifu3') {
       try {
         const response = await axios.get('https://api.waifu.pics/sfw/waifu');
         const { url } = response.data;
@@ -919,13 +919,13 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to fetch fox image.'
+            content: 'Failed to fetch waifu image.'
           }
         });
       }
     }
 	
-	if (interaction.data.name === 'pneko') {
+	if (interaction.data.name === 'pneko2') {
       try {
         const response = await axios.get('https://api.waifu.pics/sfw/neko');
         const { url } = response.data;
@@ -948,7 +948,183 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to fetch fox image.'
+            content: 'Failed to fetch neko image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pwaifu') {
+      try {
+        const response = await axios.get('https://api.waifu.im/search/?included_tags=waifu');
+        const { images } = response.data;
+		const waifu = images[0].url;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: waifu
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch waifu image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pmaid') {
+      try {
+        const response = await axios.get('https://api.waifu.im/search/?included_tags=maid');
+        const { images } = response.data;
+		const waifu = images[0].url;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: waifu
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch maid image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pwaifu2') {
+      try {
+        const response = await axios.get('https://nekos.best/api/v2/waifu');
+        const { url } = response.data.results[0];
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch waifu image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pneko') {
+      try {
+        const response = await axios.get('https://nekos.best/api/v2/neko');
+        const { url } = response.data.results[0];
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch neko image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pkitsune') {
+      try {
+        const response = await axios.get('https://nekos.best/api/v2/kitsune');
+        const { url } = response.data.results[0];
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch kitsune image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'phusbando') {
+      try {
+        const response = await axios.get('https://nekos.best/api/v2/husbando');
+        const { url } = response.data.results[0];
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch husbando image.'
           }
         });
       }
@@ -1393,8 +1569,38 @@ app.get('/register_commands', async (req, res) => {
       "options": []
     },
 	{
+      "name": "pwaifu2",
+      "description": "Random Waifu Anime Pictures",
+      "options": []
+    },
+	{
+      "name": "pwaifu3",
+      "description": "Random Waifu Anime Pictures",
+      "options": []
+    },
+	{
       "name": "pneko",
       "description": "Random Neko Anime Pictures",
+      "options": []
+    },
+	{
+      "name": "pneko2",
+      "description": "Random Neko Anime Pictures",
+      "options": []
+    },
+	{
+      "name": "pmaid",
+      "description": "Random Maid Anime Pictures",
+      "options": []
+    },
+	{
+      "name": "pkitsune",
+      "description": "Random Kitsune Anime Pictures",
+      "options": []
+    },
+	{
+      "name": "phusbando",
+      "description": "Random Husbando Anime Pictures",
       "options": []
     },
 	{
