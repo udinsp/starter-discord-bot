@@ -4,7 +4,7 @@ const TOKEN = process.env.TOKEN;
 const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
 const GUILD_ID = process.env.GUILD_ID;
 const API_IPQUALITYSCORE = process.env.API_IPQUALITYSCORE;
-const BARD_API = process.env.BARD_API;
+const APILAYER = process.env.APILAYER;
 
 const axios = require('axios');
 const express = require('express');
@@ -122,6 +122,66 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
+	
+	if (interaction.data.name === 'phonevalid2') {
+      const number = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`http://phone-number-api.com/json/?number=${number}`);
+        const numberData = response.data;
+
+		const formattedData = `Formatted: ${numberData.formatE164}\nLocal Format: ${numberData.formatNational}\nValid: ${numberData.numberValid}\nNumber Type: ${numberData.numberType}\nCountry Code: ${numberData.numberCountryCode}\nCarrier: ${numberData.carrier}\nContinent: ${numberData.continent}\nCountry: ${numberData.countryName}\nRegion: ${numberData.regionName}\nCity: ${numberData.city}\nTimezone: ${numberData.timezone}\nCurrency: ${numberData.currency}`;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Phone Number information.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'phonevalid3') {
+      const number = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.apilayer.com/number_verification/validate?apikey=${APILAYER}&number=${number}`);
+        const numberData = response.data;
+
+		const formattedData = `Valid: ${numberData.valid}\nNumber: ${numberData.number}\nLocal Format: ${numberData.local_format}\nInternational Format: ${numberData.international_format}\nCountry Prefix: ${numberData.country_prefix}\nCountry Code: ${numberData.country_code}\nCountry Name: ${numberData.country_name}\nCarrier: ${numberData.carrier}\nLine Type: ${numberData.line_type}`;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Phone Number information.'
+          }
+        });
+      }
+    }
 
     if (interaction.data.name === 'shorten') {
       const url = interaction.data.options[0].value;
@@ -179,49 +239,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
-	
-    if (interaction.data.name === 'dltiktok') {
-      const url = interaction.data.options[0].value;
-      try {
-        const tiktokResponse = await axios.get(`https://api2.trizy.co/api/download/tiktok?url=${encodeURIComponent(url)}`);
-        const tiktok = tiktokResponse.data;
-		
-		const shortUrlResponse = await axios.get(`https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(tiktok.result.video)}`);
-		const shortUrlData = shortUrlResponse.data;
-		
-		if (shortUrlData.ok) {
-			const shortVideoUrl = shortUrlData.result.full_short_link2;
-			
-			return res.send({
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					embeds: [
-					  {
-						  description: `${tiktok.result.description}\n\n**[[Download Video]](${shortVideoUrl})**`,
-						  color: null
-					  }
-					]
-				}
-			});
-		} else {
-			console.error('Failed to shorten video URL:', shortUrlData.error);
-			return res.send({
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: 'Failed to download TikTok video.'
-				}
-			});
-		  }
-		} catch (error) {
-			console.error('Error:', error);
-			return res.send({
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: 'Failed to download TikTok video.'
-				}
-			});
-		}
-	}
 		
 	if (interaction.data.name === 'dnslookup') {
       const url = interaction.data.options[0].value;
@@ -1014,6 +1031,30 @@ app.get('/register_commands', async (req, res) => {
         }
       ]
     },
+	{
+      "name": "phonevalid2",
+      "description": "Validates a phone number and returns its details",
+      "options": [
+        {
+          "name": "number",
+          "description": "The phone number to validate. Example 6289123456789",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "phonevalid3",
+      "description": "Validates a phone number and returns its details",
+      "options": [
+        {
+          "name": "number",
+          "description": "The phone number to validate. Example 6289123456789",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
     {
       "name": "shorten",
       "description": "Shorten a URL",
@@ -1033,18 +1074,6 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "URL to unshorten",
-          "type": 3,
-          "required": true
-        }
-      ]
-    },
-	{
-      "name": "dltiktok",
-      "description": "Download TikTok Videos Without Watermark",
-      "options": [
-        {
-          "name": "link_tiktok",
-          "description": "Enter link tiktok video",
           "type": 3,
           "required": true
         }
