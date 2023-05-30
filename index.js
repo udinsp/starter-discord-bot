@@ -304,36 +304,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       }
     }
-	
-	if (interaction.data.name === 'maclookup') {
-      const macAddress = interaction.data.options[0].value;
-      try {
-        const response = await axios.get(`https://api.maclookup.app/v2/macs/${macAddress}`);
-        const result = response.data;
-
-		const formattedData = `Success: ${result.success}\nFound: ${result.found}\nMAC Prefix: ${result.macPrefix}\nCompany: ${result.company}\nAddress: ${result.address}\nCountry: ${result.country}\nBlock Start: ${result.blockStart}\nBlock End: ${result.blockEnd}\nBlock Size: ${result.blockSize}\nBlock Type: ${result.blockType}\nUpdated: ${result.updated}\nIs Random: ${result.isRand}\nIs Private: ${result.isPrivate}`;
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            embeds: [
-              {
-                description: formattedData,
-                color: null
-              }
-            ]
-          }
-        });
-      } catch (error) {
-        console.log(error);
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: 'Failed to fetch MAC Address information.'
-          }
-        });
-      }
-    }
 
     if (interaction.data.name === 'shorten') {
       const url = interaction.data.options[0].value;
@@ -1569,18 +1539,6 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "domain",
           "description": "The domain to perform the WHOIS lookup on",
-          "type": 3,
-          "required": true
-        }
-      ]
-    },
-	{
-      "name": "maclookup",
-      "description": "Performs a MAC Address lookup to retrieve information about the device manufacturer",
-      "options": [
-        {
-          "name": "macAddress",
-          "description": "The MAC Address to perform the lookup on",
           "type": 3,
           "required": true
         }
