@@ -63,7 +63,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       });
     }
 
-    if (interaction.data.name === 'ip') {
+    if (interaction.data.name === 'iplookup') {
       const ipAddress = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`);
@@ -93,7 +93,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'ip2') {
+	if (interaction.data.name === 'iplookup2') {
       const ipAddress = interaction.data.options[0].value;
       try {
         const response = await axios.get(`http://free.ipwhois.io/json/${ipAddress}`);
@@ -123,7 +123,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'ip3') {
+	if (interaction.data.name === 'iplookup3') {
       const ipAddress = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://www.iplocate.io/api/lookup/${ipAddress}`);
@@ -564,7 +564,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       });
     }
 	
-	if (interaction.data.name === 'dailyq') {
+	if (interaction.data.name === 'quotes_daily') {
       try {
         const response = await axios.get('https://zenquotes.io/api/random');
         const quoteData = response.data[0];
@@ -592,7 +592,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'dailyq2') {
+	if (interaction.data.name === 'quotes_daily2') {
       try {
         const response = await axios.get('https://api.quotable.io/quotes/random');
         const quoteData = response.data[0];
@@ -620,7 +620,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'stoicq') {
+	if (interaction.data.name === 'quotes_stoic') {
       try {
         const response = await axios.get('https://api.themotivate365.com/stoic-quote');
         const { author, quote } = response.data;
@@ -647,7 +647,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'ronq') {
+	if (interaction.data.name === 'quotes_ron') {
       try {
         const response = await axios.get('http://ron-swanson-quotes.herokuapp.com/v2/quotes');
         const quote = response.data[0];
@@ -674,7 +674,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'kanyeq') {
+	if (interaction.data.name === 'quotes_kanye') {
       try {
         const response = await axios.get('https://api.kanye.rest');
         const { quote } = response.data;
@@ -701,7 +701,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'chuckj') {
+	if (interaction.data.name === 'jokes_chuck') {
       try {
         const response = await axios.get('https://api.chucknorris.io/jokes/random');
         const { value } = response.data;
@@ -755,7 +755,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'evil') {
+	if (interaction.data.name === 'jokes_evil') {
       try {
         const response = await axios.get('https://evilinsult.com/generate_insult.php?lang=en&type=json');
         const { insult } = response.data;
@@ -809,7 +809,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'fcat') {
+	if (interaction.data.name === 'facts_cat') {
       try {
         const response = await axios.get('https://catfact.ninja/fact');
         const { fact } = response.data;
@@ -836,7 +836,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pcat') {
+	if (interaction.data.name === 'pics_cat') {
       try {
         const response = await axios.get('https://api.thecatapi.com/v1/images/search');
         const [{ url }] = response.data;
@@ -865,7 +865,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pdog') {
+	if (interaction.data.name === 'pics_dog') {
       try {
         const response = await axios.get('https://dog.ceo/api/breeds/image/random');
         const { message: imageUrl } = response.data;
@@ -894,7 +894,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pfox') {
+	if (interaction.data.name === 'pics_fox') {
       try {
         const response = await axios.get('https://randomfox.ca/floof/');
         const { image } = response.data;
@@ -923,7 +923,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pshiba') {
+	if (interaction.data.name === 'pics_shiba') {
       try {
         const response = await axios.get('https://shibe.online/api/shibes');
         const [imageUrl] = response.data;
@@ -952,7 +952,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pwaifu3') {
+	if (interaction.data.name === 'pics_waifu3') {
       try {
         const response = await axios.get('https://api.waifu.pics/sfw/waifu');
         const { url } = response.data;
@@ -981,7 +981,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pneko2') {
+	if (interaction.data.name === 'pics_neko2') {
       try {
         const response = await axios.get('https://api.waifu.pics/sfw/neko');
         const { url } = response.data;
@@ -1010,7 +1010,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pwaifu') {
+	if (interaction.data.name === 'pics_waifu') {
       try {
         const response = await axios.get('https://api.waifu.im/search/?included_tags=waifu');
         const { images } = response.data;
@@ -1040,7 +1040,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pmaid') {
+	if (interaction.data.name === 'pics_maid') {
       try {
         const response = await axios.get('https://api.waifu.im/search/?included_tags=maid');
         const { images } = response.data;
@@ -1070,7 +1070,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pwaifu2') {
+	if (interaction.data.name === 'pics_waifu2') {
       try {
         const response = await axios.get('https://nekos.best/api/v2/waifu');
         const { url } = response.data.results[0];
@@ -1099,7 +1099,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pneko') {
+	if (interaction.data.name === 'pics_neko') {
       try {
         const response = await axios.get('https://nekos.best/api/v2/neko');
         const { url } = response.data.results[0];
@@ -1128,7 +1128,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'pkitsune') {
+	if (interaction.data.name === 'pics_kitsune') {
       try {
         const response = await axios.get('https://nekos.best/api/v2/kitsune');
         const { url } = response.data.results[0];
@@ -1157,7 +1157,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
-	if (interaction.data.name === 'phusbando') {
+	if (interaction.data.name === 'pics_husbando') {
       try {
         const response = await axios.get('https://nekos.best/api/v2/husbando');
         const { url } = response.data.results[0];
@@ -1181,6 +1181,35 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to fetch husbando image.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'pics_jkt48') {
+      try {
+        const response = await axios.get('https://jkt48.pakudin.my.id/api/jkt48');
+        const { url } = response.data;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                image: {
+					url: url
+				},
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch jkt48 member image.'
           }
         });
       }
@@ -1315,7 +1344,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 
-    if (interaction.data.name === 'animeq') {
+    if (interaction.data.name === 'quotes_anime') {
       try {
         const response = await axios.get('https://animechan.vercel.app/api/random');
         const quoteData = response.data;
@@ -1358,7 +1387,7 @@ app.get('/register_commands', async (req, res) => {
       "options": []
     },
     {
-      "name": "ip",
+      "name": "iplookup",
       "description": "Fetches information about an IP address",
       "options": [
         {
@@ -1370,7 +1399,7 @@ app.get('/register_commands', async (req, res) => {
       ]
     },
 	{
-      "name": "ip2",
+      "name": "iplookup2",
       "description": "Fetches information about an IP address",
       "options": [
         {
@@ -1382,7 +1411,7 @@ app.get('/register_commands', async (req, res) => {
       ]
     },
 	{
-      "name": "ip3",
+      "name": "iplookup3",
       "description": "Fetches information about an IP address",
       "options": [
         {
@@ -1574,32 +1603,32 @@ app.get('/register_commands', async (req, res) => {
       ]
     },
 	{
-      "name": "dailyq",
+      "name": "quotes_daily",
       "description": "Displays a random inspirational or motivational quote every day",
       "options": []
     },
 	{
-      "name": "dailyq2",
+      "name": "quotes_daily2",
       "description": "Displays a random inspirational or motivational quote every day",
       "options": []
     },
 	{
-      "name": "stoicq",
+      "name": "quotes_stoic",
       "description": "Stoicism Quotes",
       "options": []
     },
 	{
-      "name": "ronq",
+      "name": "quotes_ron",
       "description": "Ron Swanson Quotes",
       "options": []
     },
 	{
-      "name": "kanyeq",
+      "name": "quotes_kanye",
       "description": "Kanye West Quotes",
       "options": []
     },
 	{
-      "name": "chuckj",
+      "name": "jokes_chuck",
       "description": "Chuck Norris Jokes",
       "options": []
     },
@@ -1609,7 +1638,7 @@ app.get('/register_commands', async (req, res) => {
       "options": []
     },
 	{
-      "name": "evil",
+      "name": "jokes_evil",
       "description": "Random Evil Insult",
       "options": []
     },
@@ -1619,68 +1648,73 @@ app.get('/register_commands', async (req, res) => {
       "options": []
     },
 	{
-      "name": "fcat",
+      "name": "facts_cat",
       "description": "Random Cat Facts",
       "options": []
     },
 	{
-      "name": "pcat",
+      "name": "pics_cat",
       "description": "Random Pictures Of Cats",
       "options": []
     },
 	{
-      "name": "pdog",
+      "name": "pics_dog",
       "description": "Random Pictures Of Dogs",
       "options": []
     },
 	{
-      "name": "pfox",
+      "name": "pics_fox",
       "description": "Random Pictures Of Foxes",
       "options": []
     },
 	{
-      "name": "pshiba",
+      "name": "pics_shiba",
       "description": "Random Pictures Of Shiba Inu Dogs",
       "options": []
     },
 	{
-      "name": "pwaifu",
+      "name": "pics_waifu",
       "description": "Random Waifu Anime Pictures",
       "options": []
     },
 	{
-      "name": "pwaifu2",
+      "name": "pics_waifu2",
       "description": "Random Waifu Anime Pictures",
       "options": []
     },
 	{
-      "name": "pwaifu3",
+      "name": "pics_waifu3",
       "description": "Random Waifu Anime Pictures",
       "options": []
     },
 	{
-      "name": "pneko",
+      "name": "pics_neko",
       "description": "Random Neko Anime Pictures",
       "options": []
     },
 	{
-      "name": "pneko2",
+      "name": "pics_neko2",
       "description": "Random Neko Anime Pictures",
       "options": []
     },
 	{
-      "name": "pmaid",
+      "name": "pics_maid",
       "description": "Random Maid Anime Pictures",
       "options": []
     },
 	{
-      "name": "pkitsune",
+      "name": "pics_kitsune",
       "description": "Random Kitsune Anime Pictures",
       "options": []
     },
 	{
-      "name": "phusbando",
+      "name": "pics_husbando",
       "description": "Random Husbando Anime Pictures",
+      "options": []
+    },
+	{
+      "name": "pics_jkt48",
+      "description": "Random Pictures of JKT48 Members",
       "options": []
     },
 	{
@@ -1699,7 +1733,7 @@ app.get('/register_commands', async (req, res) => {
       "options": []
     },
     {
-      "name": "animeq",
+      "name": "quotes_anime",
       "description": "Fetches a random anime quote",
       "options": []
     }
