@@ -5,6 +5,7 @@ const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
 const GUILD_ID = process.env.GUILD_ID;
 const API_IPQUALITYSCORE = process.env.API_IPQUALITYSCORE;
 const APILAYER = process.env.APILAYER;
+const IP2WHOIS = process.env.IP2WHOIS;
 
 const axios = require('axios');
 const express = require('express');
@@ -238,6 +239,67 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to fetch Phone Number information.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'whoislookup') {
+      const number = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.apilayer.com/whois/query?apikey=${APILAYER}&domain=${domain}`);
+        const result = response.data.result;
+		const status = Array.isArray(result.status) ? result.status.join('\n') : result.status;
+
+		const formattedData = `Domain: ${result.domain_name}\nRegistrar: ${result.registrar}\nCreation Date: ${result.creation_date}\nExpiration Date: ${result.expiration_date}\nName Servers: ${result.name_servers.join(', ')}\nEmails: ${result.emails}\nStatus:\n${status}\nOrganization: ${result.org}\nAddress: ${result.address}\nCity: ${result.city}\nState: ${result.state}\nCountry: ${result.country}\nZipcode: ${result.zipcode}\nDNSSEC: ${result.dnssec}\nUpdated Date: ${result.updated_date}\nWhois Server: ${result.whois_server}`;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch WHOIS information for the domain.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'whoislookup2') {
+      const number = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.ip2whois.com/v2?key=${IP2WHOIS}&domain=${domain}`);
+        const result = response.data;
+
+		const formattedData = `Domain: ${result.domain}\nDomain ID: ${result.domain_id}\nStatus: ${result.status}\nCreate Date: ${result.create_date}\nUpdate Date: ${result.update_date}\nExpire Date: ${result.expire_date}\nDomain Age: ${result.domain_age}\nWhois Server: ${result.whois_server}\nRegistrar:\n  - ID: ${result.registrar.iana_id}\n  - Name: ${result.registrar.name}\n  - URL: ${result.registrar.url}\nRegistrant:\n  - Name: ${result.registrant.name}\n  - Organization: ${result.registrant.organization}\n  - Street Address: ${result.registrant.street_address}\n  - City: ${result.registrant.city}\n  - Region: ${result.registrant.region}\n  - Zip Code: ${result.registrant.zip_code}\n  - Country: ${result.registrant.country}\n  - Phone: ${result.registrant.phone}\n  - Fax: ${result.registrant.fax}\n  - Email: ${result.registrant.email}\nAdmin:\n  - Name: ${result.admin.name}\n  - Organization: ${result.admin.organization}\n  - Street Address: ${result.admin.street_address}\n  - City: ${result.admin.city}\n  - Region: ${result.admin.region}\n  - Zip Code: ${result.admin.zip_code}\n  - Country: ${result.admin.country}\n  - Phone: ${result.admin.phone}\n  - Fax: ${result.admin.fax}\n  - Email: ${result.admin.email}\nTech:\n  - Name: ${result.tech.name}\n  - Organization: ${result.tech.organization}\n  - Street Address: ${result.tech.street_address}\n  - City: ${result.tech.city}\n  - Region: ${result.tech.region}\n  - Zip Code: ${result.tech.zip_code}\n  - Country: ${result.tech.country}\n  - Phone: ${result.tech.phone}\n  - Fax: ${result.tech.fax}\n  - Email: ${result.tech.email}`;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch WHOIS information for the domain.'
           }
         });
       }
@@ -1453,6 +1515,30 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "number",
           "description": "The phone number to validate. Example 6289123456789",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "whoislookup",
+      "description": "Performs a WHOIS lookup for a specified domain",
+      "options": [
+        {
+          "name": "number",
+          "description": "The domain to perform the WHOIS lookup on",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "whoislookup2",
+      "description": "Performs a WHOIS lookup for a specified domain",
+      "options": [
+        {
+          "name": "number",
+          "description": "The domain to perform the WHOIS lookup on",
           "type": 3,
           "required": true
         }
