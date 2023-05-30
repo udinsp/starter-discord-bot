@@ -245,7 +245,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     }
 	
 	if (interaction.data.name === 'whoislookup') {
-      const number = interaction.data.options[0].value;
+      const domain = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://api.apilayer.com/whois/query?apikey=${APILAYER}&domain=${domain}`);
         const result = response.data.result;
@@ -276,7 +276,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     }
 	
 	if (interaction.data.name === 'whoislookup2') {
-      const number = interaction.data.options[0].value;
+      const domain = interaction.data.options[0].value;
       try {
         const response = await axios.get(`https://api.ip2whois.com/v2?key=${IP2WHOIS}&domain=${domain}`);
         const result = response.data;
@@ -1525,7 +1525,7 @@ app.get('/register_commands', async (req, res) => {
       "description": "Performs a WHOIS lookup for a specified domain",
       "options": [
         {
-          "name": "number",
+          "name": "domain",
           "description": "The domain to perform the WHOIS lookup on",
           "type": 3,
           "required": true
@@ -1537,7 +1537,7 @@ app.get('/register_commands', async (req, res) => {
       "description": "Performs a WHOIS lookup for a specified domain",
       "options": [
         {
-          "name": "number",
+          "name": "domain",
           "description": "The domain to perform the WHOIS lookup on",
           "type": 3,
           "required": true
