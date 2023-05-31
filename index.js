@@ -244,6 +244,66 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 	
+	if (interaction.data.name === 'emailvalid') {
+      const email = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://www.ipqualityscore.com/api/json/email/${API_IPQUALITYSCORE}/${email}`);
+        const emailData = response.data;
+
+		const formattedData = `Valid: ${emailData.valid}\nDisposable: ${emailData.disposable}\nSMTP Score: ${emailData.smtp_score}\nOverall Score: ${emailData.overall_score}\nFirst Name: ${emailData.first_name}\nGeneric: ${emailData.generic}\nCommon: ${emailData.common}\nDNS Valid: ${emailData.dns_valid}\nHoneypot: ${emailData.honeypot}\nDeliverability: ${emailData.deliverability}\nFrequent Complainer: ${emailData.frequent_complainer}\nSpam Trap Score: ${emailData.spam_trap_score}\nCatch All: ${emailData.catch_all}\nTimed Out: ${emailData.timed_out}\nSuspect: ${emailData.suspect}\nRecent Abuse: ${emailData.recent_abuse}\nFraud Score: ${emailData.fraud_score}\nSuggested Domain: ${emailData.suggested_domain}\nLeaked: ${emailData.leaked}\nDomain Age: ${emailData.domain_age.human}\nFirst Seen: ${emailData.first_seen.human}\nSanitized Email: ${emailData.sanitized_email}`;
+		
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch email information.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'emailvalid2') {
+      const email = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.apilayer.com/email_verification/${email}?apikey=${APILAYER}`);
+        const emailData = response.data;
+
+		const formattedData = `Email: ${emailData.email}\nDid You Mean: ${emailData.did_you_mean}\nUser: ${emailData.user}\nDomain: ${emailData.domain}\nSyntax Valid: ${emailData.syntax_valid}\nDisposable: ${emailData.is_disposable}\nRole Account: ${emailData.is_role_account}\nCatch All: ${emailData.is_catch_all}\nDeliverable: ${emailData.is_deliverable}\nCan Connect SMTP: ${emailData.can_connect_smtp}\nInbox Full: ${emailData.is_inbox_full}\nDisabled: ${emailData.is_disabled}\nMX Records: ${emailData.mx_records}\nFree: ${emailData.free}\nScore: ${emailData.score}`;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch email information.'
+          }
+        });
+      }
+    }
+	
 	if (interaction.data.name === 'whoislookup') {
       const domain = interaction.data.options[0].value;
       try {
@@ -413,6 +473,37 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Failed to unshorten the URL.'
+          }
+        });
+      }
+    }
+	
+	if (interaction.data.name === 'metatagsviewer') {
+      const url = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://api.apilayer.com/meta_tags?apikey=${APILAYER}&url=${url}`);
+        const data = response.data;
+		let metaTags = ''; data.meta_tags.forEach(tag => { if (tag.name) { metaTags += `${tag.name}: ${tag.content}\n`; } else if (tag.charset) { metaTags += `charset: ${tag.charset}\n`; } else if (tag.property) { metaTags += `${tag.property}: ${tag.content}\n`; } });
+		
+		const formattedData = `Title: ${data.title}\nHost: ${data.host.domain}\nIP Address: ${data.host.ip_address}\nScheme: ${data.host.scheme}\n\nMeta Tags:\n${metaTags}\nStats:\nBytes: ${data.stats.bytes}\nFetch Duration: ${data.stats.fetch_duration}ms\nNumber of Scripts: ${data.stats.number_of_scripts}\nNumber of Stylesheets: ${data.stats.number_of_stylesheets}`;
+		
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: formattedData,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to Meta Tags information.'
           }
         });
       }
@@ -1250,7 +1341,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 	
 	if (interaction.data.name === 'pics_jkt48') {
       try {
-        const response = await axios.get('https://jkt48.pakudin.my.id/api/jkt48');
+        const response = await axios.get('https://jkt48-image.cyclic.app/api/jkt48');
         const { url } = response.data;
 
         return res.send({
@@ -1521,6 +1612,30 @@ app.get('/register_commands', async (req, res) => {
       ]
     },
 	{
+      "name": "emailvalid",
+      "description": "Validate an email address and retrieve its details",
+      "options": [
+        {
+          "name": "email",
+          "description": "The email address to be validated",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "emailvalid2",
+      "description": "Validate an email address and retrieve its details",
+      "options": [
+        {
+          "name": "email",
+          "description": "The email address to be validated",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
       "name": "whoislookup",
       "description": "Performs a WHOIS lookup for a specified domain",
       "options": [
@@ -1587,6 +1702,18 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "url",
           "description": "URL to unshorten",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+	{
+      "name": "metatagsviewer",
+      "description": "Retrieve and view meta tags information from a specified URL",
+      "options": [
+        {
+          "name": "url",
+          "description": "The URL to fetch meta tags from",
           "type": 3,
           "required": true
         }
