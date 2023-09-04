@@ -1250,7 +1250,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 	
 	if (interaction.data.name === 'pics_jkt48') {
       try {
-        const response = await axios.get('https://jkt48-image.cyclic.app/api/jkt48');
+        const response = await axios.get('https://jkt48.pakudin.my.id/api/jkt48');
         const { url } = response.data;
 
         return res.send({
