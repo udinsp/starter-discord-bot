@@ -42,7 +42,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 
     if (interaction.data.name === 'pics_jkt48') {
       try {
-        // Kirim pesan loading
+        // Kirim ACK (Acknowledgement)
         await res.send({
           type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
         });
@@ -52,13 +52,13 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         const { url } = response.data;
     
         // Kirim pesan dengan gambar setelah berhasil dimuat
-        return res.send({
+        await res.send({
           type: InteractionResponseType.UPDATE_MESSAGE,
           data: {
             embeds: [
               {
                 image: {
-                  url: url
+                        url: url
                 },
                 color: null
               }
@@ -69,7 +69,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         console.error(error);
     
         // Kirim pesan jika terjadi kesalahan
-        return res.send({
+        await res.send({
           type: InteractionResponseType.UPDATE_MESSAGE,
           data: {
             content: 'Failed to fetch JKT48 member image.'
