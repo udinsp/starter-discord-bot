@@ -31,67 +31,52 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 
   if (interaction.type === InteractionType.APPLICATION_COMMAND) {
     console.log(interaction.data.name);
-    if (interaction.data.name === 'yo') {
+    if (interaction.data.name === 'halo') {
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: `Dalem ${interaction.member.user.username}!`,
+          content: `Halo juga ${interaction.member.user.username}!`,
         },
-      });
-    }
-
-    if (interaction.data.name === 'dm') {
-      // https://discord.com/developers/docs/resources/user#create-dm
-      let c = (await discord_api.post(`/users/@me/channels`, {
-        recipient_id: interaction.member.user.id
-      })).data;
-      try {
-        // https://discord.com/developers/docs/resources/channel#create-message
-        let res = await discord_api.post(`/channels/${c.id}/messages`, {
-          content: 'Ada yang bisa saya bantu bang?',
-        });
-        console.log(res.data);
-      } catch (e) {
-        console.log(e);
-      }
-
-      return res.send({
-        // https://discord.com/developers/docs/interactions/receiving-and-responding#responding-to-an-interaction
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: '👍'
-        }
       });
     }
 
     if (interaction.data.name === 'pics_jkt48') {
       try {
+        // Kirim pesan loading
+        await res.send({
+          type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
+        });
+    
+        // Ambil gambar dari API JKT48
         const response = await axios.get('https://jkt48.pakudin.my.id/api/jkt48');
         const { url } = response.data;
-
+    
+        // Kirim pesan dengan gambar setelah berhasil dimuat
         return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          type: InteractionResponseType.UPDATE_MESSAGE,
           data: {
             embeds: [
               {
                 image: {
-					url: url
-				},
+                  url: url
+                },
                 color: null
               }
             ]
           }
         });
       } catch (error) {
-        console.log(error);
+        console.error(error);
+    
+        // Kirim pesan jika terjadi kesalahan
         return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          type: InteractionResponseType.UPDATE_MESSAGE,
           data: {
-            content: 'Failed to fetch jkt48 member image.'
+            content: 'Failed to fetch JKT48 member image.'
           }
         });
       }
-    }
+    }    
 
   }
 });
@@ -99,13 +84,8 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 app.get('/register_commands', async (req, res) => {
   let slash_commands = [
     {
-      "name": "yo",
-      "description": "Replies with Yo!",
-      "options": []
-    },
-    {
-      "name": "dm",
-      "description": "Sends user a DM",
+      "name": "halo",
+      "description": "Replies with Halo!",
       "options": []
     },
     {
