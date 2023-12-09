@@ -75,25 +75,25 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         const response = await axios.get(`https://tcl.pakudin.my.id/search?q=${number}`);
         const numberData = response.data.data[0];
 
-        const formattedData = `*Name*: ${numberData.name || '-'}\n*Alt Name*: ${numberData.altName || '-'}\n*Score*: ${numberData.score || '-'}\n*Email*: ${numberData.internetAddresses[0]?.id || '-'}`;
+        const formattedData = `**Name**: ${numberData.name || '-'}\n**Alt Name**: ${numberData.altName || '-'}\n**Score**: ${numberData.score || '-'}\n**Email**: ${numberData.internetAddresses[0]?.id || '-'}`;
 
 			  const infoNomer = numberData.phones[0] || {};
 			  const infoSpam = numberData.spamInfo || {};
-        const infoProfile = numberData.image || {};
+        const infoProfile = numberData.image || "https://cdn.discordapp.com/attachments/372358599625801731/1182968014975553586/blank-profile-picture-973460_960_720.png";
 
-			  const infoNomerText = `\n*Info Nomer*\nProvider: ${infoNomer.carrier || '-'}\nInternational Format: ${infoNomer.e164Format || '-'}\nLocal Format: ${infoNomer.nationalFormat || '-'}\nNumber Type: ${infoNomer.numberType || '-'}`;
+			  const infoNomerText = `\n**Info Nomer**\nProvider: ${infoNomer.carrier || '-'}\nInternational Format: ${infoNomer.e164Format || '-'}\nLocal Format: ${infoNomer.nationalFormat || '-'}\nNumber Type: ${infoNomer.numberType || '-'}`;
 
 			  let infoSpamText = '';
 			  let spamStatsText = '';
 
 			  if (infoSpam.spamScore !== undefined && infoSpam.spamType !== undefined) {
 			  	const spamStats = infoSpam.spamStats;
-			  	infoSpamText = `*Info Spam*\nSpam Score: ${infoSpam.spamScore}\nSpam Type: ${infoSpam.spamType}\nSpammer Type: ${spamStats.spammerType || '-'}`;
+			  	infoSpamText = `**Info Spam**\nSpam Score: ${infoSpam.spamScore}\nSpam Type: ${infoSpam.spamType}\nSpammer Type: ${spamStats.spammerType || '-'}`;
 			  }
 
 		  	if (infoSpam.spamStats !== undefined) {
 				  const spamStats = infoSpam.spamStats;
-				  spamStatsText = `*Spam Stats*\nJumlah Laporan: ${spamStats.numReports || '-'}\nJumlah Laporan Dalam 60 Hari: ${spamStats.numReports60days || '-'}\nJumlah Pencarian Dalam 60 Hari: ${spamStats.numSearches60days || '-'}\nJumlah Panggilan Dalam 60 Hari: ${spamStats.numCalls60days || '-'}\nJumlah Panggilan Tidak Terjawab: ${spamStats.numCallsNotAnswered || '-'}\nJumlah Panggilan Terjawab: ${spamStats.numCallsAnswered || '-'}`;
+				  spamStatsText = `**Spam Stats**\nJumlah Laporan: ${spamStats.numReports || '-'}\nJumlah Laporan Dalam 60 Hari: ${spamStats.numReports60days || '-'}\nJumlah Pencarian Dalam 60 Hari: ${spamStats.numSearches60days || '-'}\nJumlah Panggilan Dalam 60 Hari: ${spamStats.numCalls60days || '-'}\nJumlah Panggilan Tidak Terjawab: ${spamStats.numCallsNotAnswered || '-'}\nJumlah Panggilan Terjawab: ${spamStats.numCallsAnswered || '-'}`;
 		  	}
 
 			  const finalMessage = `${infoNomerText}${infoSpamText ? `\n\n${infoSpamText}` : ''}${spamStatsText ? `\n\n${spamStatsText}` : ''}`;
