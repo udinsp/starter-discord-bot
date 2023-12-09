@@ -53,7 +53,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
                 image: {
 				        	      url: url
 				        },
-                color: null
+                color: 16611074
               }
             ]
           }
@@ -81,7 +81,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 			  const infoSpam = numberData.spamInfo || {};
         const infoProfile = numberData.image || "https://cdn.discordapp.com/attachments/372358599625801731/1182968014975553586/blank-profile-picture-973460_960_720.png";
 
-			  const infoNomerText = `\n**Info Nomer**\nProvider: ${infoNomer.carrier || '-'}\nInternational Format: ${infoNomer.e164Format || '-'}\nLocal Format: ${infoNomer.nationalFormat || '-'}\nNumber Type: ${infoNomer.numberType || '-'}`;
+			  const infoNomerText = `\n**Info Number**\nProvider: ${infoNomer.carrier || '-'}\nInternational Format: ${infoNomer.e164Format || '-'}\nLocal Format: ${infoNomer.nationalFormat || '-'}\nNumber Type: ${infoNomer.numberType || '-'}`;
 
 			  let infoSpamText = '';
 			  let spamStatsText = '';
@@ -106,7 +106,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
             embeds: [
               {
                 description: FinalNum,
-                color: null,
+                color: 16611074,
                 thumbnail: {
                   url: infoProfile
                 }
@@ -142,7 +142,7 @@ app.get('/register_commands', async (req, res) => {
     },
     {
       "name": "truecaller",
-      "description": "Validates a phone number and returns its details",
+      "description": "Truecaller was created to identify who was calling",
       "options": [
         {
           "name": "number",
