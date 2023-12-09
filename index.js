@@ -42,41 +42,88 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 
     if (interaction.data.name === 'pics_jkt48') {
       try {
-        // Kirim ACK (Acknowledgement)
-        await res.send({
-          type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
-        });
-    
-        // Ambil gambar dari API JKT48
         const response = await axios.get('https://jkt48.pakudin.my.id/api/jkt48');
         const { url } = response.data;
-    
-        // Kirim pesan dengan gambar setelah berhasil dimuat
-        await res.send({
-          type: InteractionResponseType.UPDATE_MESSAGE,
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             embeds: [
               {
                 image: {
-                        url: url
-                },
+				        	      url: url
+				        },
                 color: null
               }
             ]
           }
         });
       } catch (error) {
-        console.error(error);
-    
-        // Kirim pesan jika terjadi kesalahan
-        await res.send({
-          type: InteractionResponseType.UPDATE_MESSAGE,
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: 'Failed to fetch JKT48 member image.'
+            content: 'Failed to fetch jkt48 member image.'
           }
         });
       }
-    }    
+    }
+
+    if (interaction.data.name === 'truecaller') {
+      const number = interaction.data.options[0].value;
+      try {
+        const response = await axios.get(`https://tcl.pakudin.my.id/search?q=${number}`);
+        const numberData = response.data.data[0];
+
+        const formattedData = `*Name*: ${numberData.name || '-'}\n*Alt Name*: ${numberData.altName || '-'}\n*Score*: ${numberData.score || '-'}\n*Email*: ${numberData.internetAddresses[0]?.id || '-'}`;
+
+			  const infoNomer = numberData.phones[0] || {};
+			  const infoSpam = numberData.spamInfo || {};
+        const infoProfile = numberData.image || {};
+
+			  const infoNomerText = `\n*Info Nomer*\nProvider: ${infoNomer.carrier || '-'}\nInternational Format: ${infoNomer.e164Format || '-'}\nLocal Format: ${infoNomer.nationalFormat || '-'}\nNumber Type: ${infoNomer.numberType || '-'}`;
+
+			  let infoSpamText = '';
+			  let spamStatsText = '';
+
+			  if (infoSpam.spamScore !== undefined && infoSpam.spamType !== undefined) {
+			  	const spamStats = infoSpam.spamStats;
+			  	infoSpamText = `*Info Spam*\nSpam Score: ${infoSpam.spamScore}\nSpam Type: ${infoSpam.spamType}\nSpammer Type: ${spamStats.spammerType || '-'}`;
+			  }
+
+		  	if (infoSpam.spamStats !== undefined) {
+				  const spamStats = infoSpam.spamStats;
+				  spamStatsText = `*Spam Stats*\nJumlah Laporan: ${spamStats.numReports || '-'}\nJumlah Laporan Dalam 60 Hari: ${spamStats.numReports60days || '-'}\nJumlah Pencarian Dalam 60 Hari: ${spamStats.numSearches60days || '-'}\nJumlah Panggilan Dalam 60 Hari: ${spamStats.numCalls60days || '-'}\nJumlah Panggilan Tidak Terjawab: ${spamStats.numCallsNotAnswered || '-'}\nJumlah Panggilan Terjawab: ${spamStats.numCallsAnswered || '-'}`;
+		  	}
+
+			  const finalMessage = `${infoNomerText}${infoSpamText ? `\n\n${infoSpamText}` : ''}${spamStatsText ? `\n\n${spamStatsText}` : ''}`;
+
+        const FinalNum = `${formattedData}\n${finalMessage}`
+        
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: FinalNum,
+                color: null,
+                thumbnail: {
+                  url: infoProfile
+                }
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Failed to fetch Phone Number information.'
+          }
+        });
+      }
+    }
 
   }
 });
@@ -92,6 +139,18 @@ app.get('/register_commands', async (req, res) => {
       "name": "pics_jkt48",
       "description": "Random Pictures of JKT48 Members",
       "options": []
+    },
+    {
+      "name": "truecaller",
+      "description": "Validates a phone number and returns its details",
+      "options": [
+        {
+          "name": "number",
+          "description": "The phone number to validate. Example 6289123456789",
+          "type": 3,
+          "required": true
+        }
+      ]
     }
   ];
 
