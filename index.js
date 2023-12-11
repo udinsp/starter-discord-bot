@@ -3,7 +3,7 @@ const APPLICATION_ID = process.env.APPLICATION_ID;
 const TOKEN = process.env.TOKEN;
 const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
 const GUILD_ID = process.env.GUILD_ID;
-const API_IPQUALITYSCORE = process.env.API_IPQUALITYSCORE;
+const EdenAI = process.env.EdenAI;
 const APILAYER = process.env.APILAYER;
 const IP2WHOIS = process.env.IP2WHOIS;
 
@@ -125,6 +125,52 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 
+    if (interaction.data.name === 'chat') {
+      const TextInput = interaction.data.options[0].value;
+      try {
+        
+        const options = {
+					method: 'POST',
+					url: 'https://api.edenai.run/v2/text/chat',
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${EdenAI}`
+					},
+					data: JSON.stringify({
+						providers: "openai",
+  						openai: "gpt-3.5-turbo",
+ 						temperature : 0.1,
+  						max_tokens : 2000,
+  						text: TextInput
+					  })
+					};
+					
+  			const response = await axios.request(options);
+				const assistantMessage = response.data.openai.generated_text;
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                description: assistantMessage,
+                color: null
+              }
+            ]
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: 'Error! Trio is currently unable to think.'
+          }
+        });
+      }
+    }
+
   }
 });
 
@@ -147,6 +193,18 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "number",
           "description": "The phone number to validate. Example 6289123456789",
+          "type": 3,
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "chat",
+      "description": "Chat with Trio by asking questions",
+      "options": [
+        {
+          "name": "input",
+          "description": "Your message or question for Trio",
           "type": 3,
           "required": true
         }
