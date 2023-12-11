@@ -127,6 +127,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 
     if (interaction.data.name === 'chat') {
       const TextInput = interaction.data.options[0].value;
+    
       try {
         await res.send({
           type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
@@ -143,8 +144,8 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           data: JSON.stringify({
             providers: "openai",
             openai: "gpt-3.5-turbo",
-            temperature : 0.1,
-            max_tokens : 2000,
+            temperature: 0.1,
+            max_tokens: 2000,
             text: TextInput
           })
         };
@@ -152,8 +153,8 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         const response = await axios.request(options);
         const assistantMessage = response.data.openai.generated_text;
     
-        return res.send({
-          type: InteractionResponseType.UPDATE_MESSAGE,
+        await res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             embeds: [
               {
@@ -165,15 +166,14 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         });
       } catch (error) {
         console.error(error);
-    
         await res.send({
-          type: InteractionResponseType.UPDATE_MESSAGE,
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: 'Error! Trio is currently unable to think.'
           }
         });
       }
-    }    
+    }       
 
   }
 });
