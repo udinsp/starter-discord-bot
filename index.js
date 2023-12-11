@@ -3,9 +3,6 @@ const APPLICATION_ID = process.env.APPLICATION_ID;
 const TOKEN = process.env.TOKEN;
 const PUBLIC_KEY = process.env.PUBLIC_KEY || 'not set';
 const GUILD_ID = process.env.GUILD_ID;
-const ChatGPT = process.env.ChatGPT;
-const APILAYER = process.env.APILAYER;
-const IP2WHOIS = process.env.IP2WHOIS;
 
 const axios = require('axios');
 const express = require('express');
@@ -125,35 +122,6 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       }
     }
 
-    if (interaction.data.name === 'chat') {
-      const TextInput = interaction.data.options[0].value;
-      try {
-        
-        const response = await axios.get(`https://chatai.pakudin.my.id/chat?password=${ChatGPT}&q=${TextInput}`);
-				const assistantMessage = response.data.openai.generated_text;
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            embeds: [
-              {
-                description: assistantMessage,
-                color: null
-              }
-            ]
-          }
-        });
-      } catch (error) {
-        console.log(error);
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: 'Error! Trio is currently unable to think.'
-          }
-        });
-      }
-    }
-
   }
 });
 
@@ -176,18 +144,6 @@ app.get('/register_commands', async (req, res) => {
         {
           "name": "number",
           "description": "The phone number to validate. Example 6289123456789",
-          "type": 3,
-          "required": true
-        }
-      ]
-    },
-    {
-      "name": "chat",
-      "description": "Chat with Trio by asking questions",
-      "options": [
-        {
-          "name": "input",
-          "description": "Your message or question for Trio",
           "type": 3,
           "required": true
         }
