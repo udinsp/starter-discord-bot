@@ -129,7 +129,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
       const TextInput = interaction.data.options[0].value;
       try {
         
-        const response = await axios.get(`hhttps://chatai.pakudin.my.id/chat?password=${ChatGPT}&q=${TextInput}`);
+        const response = await axios.get(`https://chatai.pakudin.my.id/chat?password=${ChatGPT}&q=${TextInput}`);
 				const assistantMessage = response.data.openai.generated_text;
 
         return res.send({
