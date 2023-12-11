@@ -152,7 +152,7 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         const response = await axios.request(options);
         const assistantMessage = response.data.openai.generated_text;
     
-        await res.send({
+        return res.send({
           type: InteractionResponseType.UPDATE_MESSAGE,
           data: {
             embeds: [
