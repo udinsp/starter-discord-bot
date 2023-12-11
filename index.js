@@ -128,29 +128,32 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
     if (interaction.data.name === 'chat') {
       const TextInput = interaction.data.options[0].value;
       try {
-        
+        await res.send({
+          type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
+        });
+    
         const options = {
-					method: 'POST',
-					url: 'https://api.edenai.run/v2/text/chat',
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${EdenAI}`
-					},
-					data: JSON.stringify({
-						providers: "openai",
-  						openai: "gpt-3.5-turbo",
- 						temperature : 0.1,
-  						max_tokens : 2000,
-  						text: TextInput
-					  })
-					};
-					
-  			const response = await axios.request(options);
-				const assistantMessage = response.data.openai.generated_text;
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          method: 'POST',
+          url: 'https://api.edenai.run/v2/text/chat',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${EdenAI}`
+          },
+          data: JSON.stringify({
+            providers: "openai",
+            openai: "gpt-3.5-turbo",
+            temperature : 0.1,
+            max_tokens : 2000,
+            text: TextInput
+          })
+        };
+    
+        const response = await axios.request(options);
+        const assistantMessage = response.data.openai.generated_text;
+    
+        await res.send({
+          type: InteractionResponseType.UPDATE_MESSAGE,
           data: {
             embeds: [
               {
@@ -161,15 +164,16 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
           }
         });
       } catch (error) {
-        console.log(error);
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        console.error(error);
+    
+        await res.send({
+          type: InteractionResponseType.UPDATE_MESSAGE,
           data: {
             content: 'Error! Trio is currently unable to think.'
           }
         });
       }
-    }
+    }    
 
   }
 });
